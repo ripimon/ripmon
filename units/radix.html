@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ===== SEO ===== -->
+<title>2進数って何？進数を知って、進数の変換をしてみよう。| リピ問 / ripimon</title>
+<meta name="description" content="2進数・8進数・10進数・16進数の読み方から相互変換まで、ショート動画5本と4択ドリル46問で繰り返し練習。情報処理技術者試験対応。">
+<meta name="keywords" content="進数変換,2進数,8進数,16進数,情報処理技術者試験,基本情報技術者,練習問題,4択,ドリル,ripimon,リピ問">
+<meta name="author" content="リピ問 / ripimon">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://ripimon.github.io/ripmon/units/radix.html">
+<meta property="og:title" content="2進数って何？進数を知って、進数の変換をしてみよう。| リピ問 / ripimon">
+<meta property="og:description" content="ショート動画5本と4択ドリル46問で進数変換をマスター。情報処理技術者試験対応。繰り返し練習が、あなたの自信につながる。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ripimon.github.io/ripmon/units/radix.html">
+<meta property="og:image" content="https://ripimon.github.io/ripmon/ripimon_banner.png">
+<!-- ===== SEO ここまで ===== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- ===== GA4 =====
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+===== GA4 ここまで ===== -->
+
+<style>
+  :root {
+    --bg:      #0a0e14;
+    --surface: #121820;
+    --surface2:#1a2230;
+    --border:  #1e3040;
+    --accent:  #00e5ff;
+    --accent3: #7cff6b;
+    --text:    #c8d8e8;
+    --text-dim:#5a7080;
+    --mono:    'Share Tech Mono', monospace;
+    --sans:    'Noto Sans JP', sans-serif;
+    --radius:  12px;
+    --glow:    0 0 20px rgba(0,229,255,0.15);
+    --ch1: #00e5ff;
+    --ch2: #ff6b35;
+    --ch3: #7cff6b;
+    --ch4: #ffd166;
+    --ch5: #c87cff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none;
+  }
+
+  /* ── header ── */
+  header {
+    position: relative; z-index: 10;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(0,229,255,0.06) 0%, transparent 100%);
+  }
+  .header-inner { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
+
+  /* パンくず */
+  .breadcrumb { display: flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 10px; color: var(--text-dim); flex-wrap: wrap; }
+  .breadcrumb a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb .sep { color: var(--border); }
+
+  /* 単元タイトル */
+  .unit-title-head {
+    font-size: clamp(13px, 3.5vw, 16px);
+    color: #fff;
+    line-height: 1.5;
+    font-weight: 700;
+  }
+
+  /* ── main ── */
+  main { position: relative; z-index: 10; max-width: 600px; margin: 0 auto; padding: 16px 14px 60px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── section label ── */
+  .sec-label { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .sec-label .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 7px var(--accent); flex-shrink: 0; }
+  .sec-label h2 { font-size: 11px; font-family: var(--mono); color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ── chapter tabs ── */
+  .ch-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  .ch-tabs::-webkit-scrollbar { display: none; }
+  .ch-tab { flex-shrink: 0; padding: 7px 13px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); font-family: var(--mono); font-size: 11px; color: var(--text-dim); cursor: pointer; transition: all 0.2s; user-select: none; white-space: nowrap; }
+  .ch-tab:hover { border-color: rgba(0,229,255,0.3); color: var(--text); }
+  .ch-tab.active-ch1 { border-color: var(--ch1); color: var(--ch1); background: rgba(0,229,255,0.08); }
+  .ch-tab.active-ch2 { border-color: var(--ch2); color: var(--ch2); background: rgba(255,107,53,0.08); }
+  .ch-tab.active-ch3 { border-color: var(--ch3); color: var(--ch3); background: rgba(124,255,107,0.08); }
+  .ch-tab.active-ch4 { border-color: var(--ch4); color: var(--ch4); background: rgba(255,209,102,0.08); }
+  .ch-tab.active-ch5 { border-color: var(--ch5); color: var(--ch5); background: rgba(200,124,255,0.08); }
+
+  /* ── video panel ── */
+  .ch-panel { display: none; flex-direction: column; gap: 0; }
+  .ch-panel.show { display: flex; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .video-wrap { position: relative; width: 100%; overflow: hidden; cursor: pointer; }
+  .video-wrap.short { aspect-ratio: 16/9; max-width: 100%; margin: 0 auto; }
+  .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: none; }
+  .video-thumb { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg,#0d1822,#0a1420); background-size: cover; background-position: center; }
+  .video-thumb::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
+  .video-thumb .play-btn, .video-thumb p { position: relative; z-index: 1; }
+  .play-btn { width: 52px; height: 52px; border-radius: 50%; background: rgba(0,229,255,0.18); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .play-btn:hover { background: rgba(0,229,255,0.35); box-shadow: var(--glow); }
+  .play-btn svg { fill: var(--accent); margin-left: 4px; }
+  .video-thumb p { font-size: 11px; color: #fff; font-family: var(--mono); text-align: center; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+  .video-caption { padding: 9px 13px; font-size: 11px; color: var(--text-dim); font-family: var(--mono); border-top: 1px solid var(--border); background: var(--surface2); }
+  .card.border-ch1 { border-color: rgba(0,229,255,0.3); }
+  .card.border-ch2 { border-color: rgba(255,107,53,0.3); }
+  .card.border-ch3 { border-color: rgba(124,255,107,0.3); }
+  .card.border-ch4 { border-color: rgba(255,209,102,0.3); }
+  .card.border-ch5 { border-color: rgba(200,124,255,0.3); }
+
+  /* ── quiz selector ── */
+  .quiz-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .quiz-sel-btn { padding: 11px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; display: flex; flex-direction: column; gap: 3px; transition: all 0.2s; text-align: left; -webkit-tap-highlight-color: transparent; }
+  .quiz-sel-btn:hover { border-color: rgba(0,229,255,0.3); }
+  .quiz-sel-btn.active.ch1 { border-color: var(--ch1); background: rgba(0,229,255,0.06); box-shadow: 0 0 12px rgba(0,229,255,0.1); }
+  .quiz-sel-btn.active.ch2 { border-color: var(--ch2); background: rgba(255,107,53,0.06); }
+  .quiz-sel-btn.active.ch3 { border-color: var(--ch3); background: rgba(124,255,107,0.06); }
+  .quiz-sel-btn.active.ch4 { border-color: var(--ch4); background: rgba(255,209,102,0.06); }
+  .qsb-ch { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; padding: 2px 7px; border-radius: 4px; border: 1px solid; display: inline-block; width: fit-content; margin-bottom: 2px; }
+  .ch1 .qsb-ch { color: var(--ch1); border-color: rgba(0,229,255,0.35); background: rgba(0,229,255,0.07); }
+  .ch2 .qsb-ch { color: var(--ch2); border-color: rgba(255,107,53,0.35); background: rgba(255,107,53,0.07); }
+  .ch3 .qsb-ch { color: var(--ch3); border-color: rgba(124,255,107,0.35); background: rgba(124,255,107,0.07); }
+  .ch4 .qsb-ch { color: var(--ch4); border-color: rgba(255,209,102,0.35); background: rgba(255,209,102,0.07); }
+  .qsb-name { font-family: var(--mono); font-size: 11px; color: #fff; line-height: 1.4; }
+  .qsb-count { font-family: var(--mono); font-size: 9px; color: var(--text-dim); }
+
+  /* ── question panel ── */
+  .q-panel { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .q-dot { width: 34px; height: 34px; border-radius: 6px; border: 1px solid var(--border); background: #1e2c3a; font-family: var(--mono); font-size: 12px; color: var(--text-dim); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.18s; user-select: none; }
+  .q-dot:hover { border-color: rgba(0,229,255,0.4); color: var(--accent); }
+  .q-dot.current { border-color: var(--accent) !important; color: var(--accent) !important; box-shadow: 0 0 10px rgba(0,229,255,0.25); background: rgba(0,229,255,0.1) !important; }
+  .q-dot.correct { background: #163324; border-color: #3aff6b45; color: #7cff6b; }
+  .q-dot.wrong   { background: #2e1515; border-color: #ff444445; color: #ff7070; }
+  .q-legend { width: 100%; display: flex; gap: 14px; margin-top: 2px; padding-top: 9px; border-top: 1px solid var(--border); }
+  .q-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; font-family: var(--mono); color: var(--text-dim); }
+  .q-legend-sw { width: 11px; height: 11px; border-radius: 3px; border: 1px solid; }
+  .q-legend-sw.u { background: #1e2c3a; border-color: var(--border); }
+  .q-legend-sw.c { background: #163324; border-color: #3aff6b45; }
+  .q-legend-sw.w { background: #2e1515; border-color: #ff444445; }
+
+  /* ── quiz card ── */
+  .quiz-area { display: flex; flex-direction: column; gap: 12px; }
+  .quiz-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; position: relative; overflow: hidden; }
+  .quiz-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .quiz-card.ch1::before { background: linear-gradient(90deg,var(--ch1),transparent); }
+  .quiz-card.ch2::before { background: linear-gradient(90deg,var(--ch2),transparent); }
+  .quiz-card.ch3::before { background: linear-gradient(90deg,var(--ch3),transparent); }
+  .quiz-card.ch4::before { background: linear-gradient(90deg,var(--ch4),transparent); }
+
+  .quiz-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .quiz-ch-badge { font-family: var(--mono); font-size: 9px; padding: 2px 8px; border-radius: 4px; border: 1px solid; letter-spacing: 2px; text-transform: uppercase; }
+  .quiz-ch-badge.ch1 { color: var(--ch1); border-color: rgba(0,229,255,0.35); background: rgba(0,229,255,0.07); }
+  .quiz-ch-badge.ch2 { color: var(--ch2); border-color: rgba(255,107,53,0.35); background: rgba(255,107,53,0.07); }
+  .quiz-ch-badge.ch3 { color: var(--ch3); border-color: rgba(124,255,107,0.35); background: rgba(124,255,107,0.07); }
+  .quiz-ch-badge.ch4 { color: var(--ch4); border-color: rgba(255,209,102,0.35); background: rgba(255,209,102,0.07); }
+  .quiz-num { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+
+  .quiz-question { font-size: clamp(12px,3vw,14px); color: var(--text); margin-bottom: 14px; line-height: 1.85; white-space: pre-line; }
+  .quiz-question .blank { font-family: var(--mono); font-size: 14px; color: #fff; background: var(--surface2); padding: 1px 10px; border-radius: 4px; border: 1px solid var(--border); display: inline-block; }
+
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .choice-btn { padding: 11px 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: var(--mono); font-size: clamp(12px,3vw,14px); cursor: pointer; transition: all 0.15s; text-align: center; white-space: pre-line; line-height: 1.4; }
+  .choice-btn:active { transform: scale(0.97); }
+  .choice-btn:hover:not(:disabled) { border-color: rgba(0,229,255,0.4); background: rgba(0,229,255,0.06); color: #fff; }
+  .choice-btn.correct { border-color: var(--accent3); background: rgba(124,255,107,0.12); color: var(--accent3); animation: pulse-correct 0.4s ease; }
+  .choice-btn.wrong   { border-color: #ff4444; background: rgba(255,68,68,0.1); color: #ff6666; }
+  .choice-btn.reveal  { border-color: var(--accent3); background: rgba(124,255,107,0.06); color: var(--accent3); }
+  @keyframes pulse-correct { 0%{transform:scale(1)} 50%{transform:scale(1.03)} 100%{transform:scale(1)} }
+
+  .feedback { display: none; margin-top: 11px; padding: 10px 13px; border-radius: 8px; font-size: 12px; line-height: 1.8; font-family: var(--mono); border: 1px solid; white-space: pre-line; }
+  .feedback.show { display: block; }
+  .feedback.ok { border-color: #7cff6b40; background: #7cff6b08; color: #9fffb0; }
+  .feedback.ng { border-color: #ff444440; background: #ff444408; color: #ff9999; }
+
+  .next-btn { display: none; width: 100%; padding: 13px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: var(--mono); font-size: 12px; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .next-btn.show { display: block; }
+  .next-btn:hover { border-color: rgba(0,229,255,0.4); color: var(--accent); }
+
+  /* ── score ── */
+  .score-box { display: none; flex-direction: column; align-items: center; gap: 14px; padding: 26px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); text-align: center; }
+  .score-box.show { display: flex; }
+  .score-label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
+  .score-value { font-family: var(--mono); font-size: 48px; color: var(--accent); line-height: 1; }
+  .score-value span { font-size: 20px; color: var(--text-dim); }
+  .score-msg { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .badge-wrap { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .badge-icon { font-size: 50px; animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+  @keyframes badgePop { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+  .badge-name { font-family: var(--mono); font-size: 12px; letter-spacing: 2px; padding: 3px 14px; border-radius: 20px; border: 1px solid var(--accent); color: var(--accent); background: rgba(0,229,255,0.08); }
+  .score-btns { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+  .retry-btn { padding: 12px; border-radius: 8px; border: 1px solid var(--accent); background: rgba(0,229,255,0.08); color: var(--accent); font-family: var(--mono); font-size: 12px; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; }
+  .retry-btn:hover { background: rgba(0,229,255,0.18); box-shadow: var(--glow); }
+  .home-btn { padding: 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim); font-family: var(--mono); font-size: 12px; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; text-decoration: none; text-align: center; display: block; }
+  .home-btn:hover { border-color: rgba(0,229,255,0.3); color: var(--text); }
+
+  /* ── ref table ── */
+  .ref-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+  .ref-table th { padding: 7px 10px; text-align: center; border-bottom: 1px solid var(--border); color: var(--accent); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; background: var(--surface2); }
+  .ref-table td { padding: 6px 10px; text-align: center; border-bottom: 1px solid rgba(30,48,64,0.5); color: var(--text); }
+  .ref-table tr:hover td { background: rgba(0,229,255,0.04); }
+  .ref-table .hex { color: #c87cff; }
+  .ref-table .bin { color: #7cff6b; }
+
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <nav class="breadcrumb" aria-label="パンくず">
+      <a href="https://ripimon.github.io/ripmon/">リピ問 top</a>
+      <span class="sep">›</span>
+      <span>2進数って何？進数を知って、進数の変換をしてみよう。</span>
+    </nav>
+    <h1 class="unit-title-head">2進数って何？進数を知って、進数の変換をしてみよう。</h1>
+  </div>
+</header>
+
+<main>
+
+  <!-- ① 解説動画 -->
+  <section>
+    <div class="sec-label"><div class="dot"></div><h2>解説動画</h2></div>
+
+    <div class="ch-tabs" id="chTabs">
+      <button class="ch-tab" data-ch="1">CH1 書き方・読み方</button>
+      <button class="ch-tab" data-ch="2">CH2 進数対応表</button>
+      <button class="ch-tab" data-ch="3">CH3 繰り上がり</button>
+      <button class="ch-tab" data-ch="4">CH4 N進数→10進数</button>
+      <button class="ch-tab" data-ch="5">CH5 10進数→N進数</button>
+    </div>
+
+    <div id="chPanels">
+      <div class="ch-panel" id="panel-ch1">
+        <div class="card border-ch1">
+          <div class="video-wrap short" id="vwrap-ch1">
+            <div class="video-thumb" id="vthumb-ch1" style="background-image:url('ch1_screenshot.png');"><div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><p>▶ タップしてYouTubeで開く</p></div>
+            <iframe id="vframe-ch1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">CH1 · 書き方・読み方 — 2進数・8進数・10進数・16進数の基礎</div>
+        </div>
+      </div>
+
+      <div class="ch-panel" id="panel-ch2">
+        <div class="card border-ch2">
+          <div class="video-wrap short" id="vwrap-ch2">
+            <div class="video-thumb" id="vthumb-ch2" style="background-image:url('ch2_screenshot.png');"><div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><p>▶ タップしてYouTubeで開く</p></div>
+            <iframe id="vframe-ch2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">CH2 · 進数対応表 — 0〜16の各進数対応</div>
+        </div>
+      </div>
+
+      <div class="ch-panel" id="panel-ch3">
+        <div class="card border-ch3">
+          <div class="video-wrap short" id="vwrap-ch3">
+            <div class="video-thumb" id="vthumb-ch3" style="background-image:url('ch3_screenshot.png');"><div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><p>▶ タップしてYouTubeで開く</p></div>
+            <iframe id="vframe-ch3" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">CH3 · 繰り上がり — 桁が上がるしくみ</div>
+        </div>
+      </div>
+
+      <div class="ch-panel" id="panel-ch4">
+        <div class="card border-ch4">
+          <div class="video-wrap short" id="vwrap-ch4">
+            <div class="video-thumb" id="vthumb-ch4" style="background-image:url('ch4_screenshot.png');"><div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><p>▶ タップしてYouTubeで開く</p></div>
+            <iframe id="vframe-ch4" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">CH4 · N進数→10進数 — 重みを使った変換</div>
+        </div>
+      </div>
+
+      <div class="ch-panel" id="panel-ch5">
+        <div class="card border-ch5">
+          <div class="video-wrap short" id="vwrap-ch5">
+            <div class="video-thumb" id="vthumb-ch5" style="background-image:url('ch5_screenshot.png');"><div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><p>▶ タップしてYouTubeで開く</p></div>
+            <iframe id="vframe-ch5" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">CH5 · 10進数→N進数 — 割り算を使った変換</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② CHAPTERと問題を選ぶ -->
+  <section>
+    <div class="sec-label"><div class="dot"></div><h2>CHAPTERと問題を選ぶ</h2></div>
+    <div class="quiz-select-grid">
+      <button class="quiz-sel-btn ch1" data-quiz="1">
+        <span class="qsb-ch">CH1</span>
+        <span class="qsb-name">進数の定義・読み方</span>
+        <span class="qsb-count">12問</span>
+      </button>
+      <button class="quiz-sel-btn ch2" data-quiz="2">
+        <span class="qsb-ch">CH2-3</span>
+        <span class="qsb-name">数え方・対応表</span>
+        <span class="qsb-count">16問</span>
+      </button>
+      <button class="quiz-sel-btn ch3" data-quiz="3">
+        <span class="qsb-ch">CH4</span>
+        <span class="qsb-name">N進数→10進数</span>
+        <span class="qsb-count">9問</span>
+      </button>
+      <button class="quiz-sel-btn ch4" data-quiz="4">
+        <span class="qsb-ch">CH5</span>
+        <span class="qsb-name">10進数→N進数</span>
+        <span class="qsb-count">9問</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ③ 問題番号パネル -->
+  <section>
+    <div class="sec-label"><div class="dot"></div><h2>問題一覧</h2></div>
+    <div class="q-panel" id="qPanel"></div>
+  </section>
+
+  <!-- ④ クイズエリア -->
+  <div class="quiz-area" id="quizArea"></div>
+  <div class="score-box" id="scoreBox"></div>
+
+  <!-- ⑤ 参照テーブル -->
+  <section>
+    <div class="sec-label"><div class="dot"></div><h2>対応表</h2></div>
+    <div class="card" style="overflow-x:auto;">
+      <table class="ref-table">
+        <thead><tr><th>10進</th><th>2進</th><th>8進</th><th>16進</th></tr></thead>
+        <tbody id="refTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ══════════════════════════════
+   YouTube ショート動画ID
+   URL https://youtube.com/shorts/XXXXX の XXXXX 部分
+══════════════════════════════ */
+const YOUTUBE_IDS = {
+  ch1: 'Ux77zo62-8o',
+  ch2: 'd92Aq9iN4Kc',
+  ch3: 'U_lHkPCXe7M',
+  ch4: '2iqTS8t9cXM',
+  ch5: 'oKn9NxU-FJ0',
+};
+
+/* ══════════════════════════════
+   問題データ
+══════════════════════════════ */
+const QUESTIONS = {
+  1: [
+    { id:"lv1-01", ch:1, q:"［　　　］は 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 の\n10種類の数字を使って数を書く。", answer:"10進数", choices:["2進数","8進数","10進数","16進数"], explanation:"10進数は 0〜9 の10種類の数字を使います。私たちが日常で使っている数の表現方法です。" },
+    { id:"lv1-02", ch:1, q:"2進数は ［　　　］ の2種類の数字を使って数を書く。", answer:"0, 1", choices:["0, 1","0, 1, 2","0〜7","0〜9"], explanation:"2進数は 0 と 1 の2種類だけを使います。コンピュータ内部の情報表現に使われます。" },
+    { id:"lv1-03", ch:1, q:"8進数は ［　　　］ の8種類の数字を使って数を書く。", answer:"0〜7", choices:["0〜6","0〜7","0〜8","0〜9"], explanation:"8進数は 0〜7 の8種類の数字を使います。8 以上の数字は存在しません。" },
+    { id:"lv1-04", ch:1, q:"16進数は 0〜9 と ［　　　］ の\n16種類の数字・文字を使って数を書く。", answer:"A〜F", choices:["A〜E","A〜F","A〜G","A〜Z"], explanation:"16進数は 0〜9 に加えて A〜F（10〜15に対応）を使います。合計16種類です。" },
+    { id:"lv1-05", ch:1, q:"「10(2)」は何進数で書かれた数か。", answer:"2進数", choices:["2進数","8進数","10進数","16進数"], explanation:"括弧内の数字が基数（底）を表します。(2) は2進数であることを示します。" },
+    { id:"lv1-06", ch:1, q:"「10(8)」は何進数で書かれた数か。", answer:"8進数", choices:["2進数","8進数","10進数","16進数"], explanation:"(8) は8進数であることを示します。10(8) は10進数の「8」と同じ値です。" },
+    { id:"lv1-07", ch:1, q:"「10(10)」は何進数で書かれた数か。", answer:"10進数", choices:["2進数","8進数","10進数","16進数"], explanation:"(10) は10進数であることを示します。10(10) は私たちが普段使う「10」です。" },
+    { id:"lv1-08", ch:1, q:"「10(16)」は何進数で書かれた数か。", answer:"16進数", choices:["2進数","8進数","10進数","16進数"], explanation:"(16) は16進数であることを示します。10(16) は10進数の「16」と同じ値です。" },
+    { id:"lv1-09", ch:1, q:"「10」を「ジュウ」と読んだ。\nこれは何進数として読んだか。", answer:"10進数", choices:["2進数","8進数","10進数","16進数"], explanation:"「ジュウ」は10進数の読み方です。2進数・8進数・16進数の「10」はどれも「イチゼロ」と読みます。" },
+    { id:"lv1-10", ch:1, q:"「10(2)」を「イチゼロ」と読んだ。\nこれは何進数として読んだか。", answer:"2進数", choices:["2進数","8進数","10進数","16進数"], explanation:"2進数では各桁をそのまま「イチ」「ゼロ」と読みます。10(2) は「イチゼロ」と読む2進数です。" },
+    { id:"lv1-11", ch:1, q:"「10(8)」を「イチゼロ」と読んだ。\nこれは何進数として読んだか。", answer:"8進数", choices:["2進数","8進数","10進数","16進数"], explanation:"8進数でも桁をそのまま「イチ」「ゼロ」と読みます。10(8) は「イチゼロ」と読む8進数です。" },
+    { id:"lv1-12", ch:1, q:"「10(16)」を「イチゼロ」と読んだ。\nこれは何進数として読んだか。", answer:"16進数", choices:["2進数","8進数","10進数","16進数"], explanation:"16進数でも桁をそのまま「イチ」「ゼロ」と読みます。10(16) は「イチゼロ」と読む16進数です。" }
+  ],
+  2: [
+    { id:"lv2-01", ch:2, q:"2進数の数え方として正しいものはどれか。\n0, 1, ［　　　］, 11, 100, ...", answer:"10", choices:["2","10","11","100"], explanation:"2進数は 0, 1 の次に桁が上がり「10」になります。10進数の「2」に相当します。" },
+    { id:"lv2-02", ch:2, q:"2進数の数え方として正しいものはどれか。\n0, 1, 10, 11, ［　　　］, 101, ...", answer:"100", choices:["12","20","100","111"], explanation:"2進数で 11 の次は 100 です。10進数の「4」に相当します。" },
+    { id:"lv2-03", ch:2, q:"2進数の数え方として正しいものはどれか。\n0, 1, 10, 11, 100, 101, 110, ［　　　］, 1000, ...", answer:"111", choices:["011","111","120","1000"], explanation:"2進数で 110 の次は 111 です。10進数の「7」に相当します。" },
+    { id:"lv2-04", ch:2, q:"8進数の数え方として正しいものはどれか。\n0, 1, 2, 3, 4, 5, 6, 7, ［　　　］, 11, ...", answer:"10", choices:["8","9","10","11"], explanation:"8進数は 7 の次に桁が上がり「10」になります。10進数の「8」に相当します。8や9は8進数では使いません。" },
+    { id:"lv2-05", ch:2, q:"8進数の数え方として正しいものはどれか。\n..., 15, 16, 17, ［　　　］, 21, ...", answer:"20", choices:["18","19","20","22"], explanation:"8進数で 17 の次は 20 です。10進数の「16」に相当します。" },
+    { id:"lv2-06", ch:2, q:"8進数の数え方として正しいものはどれか。\n..., 75, 76, 77, ［　　　］, 101, ...", answer:"100", choices:["78","99","100","110"], explanation:"8進数で 77 の次は 100 です。10進数の「64」に相当します。" },
+    { id:"lv2-07", ch:2, q:"10進数の数え方として正しいものはどれか。\n..., 7, 8, 9, ［　　　］, 11, ...", answer:"10", choices:["0","10","19","100"], explanation:"10進数で 9 の次は 10 です。私たちが普段使う数え方です。" },
+    { id:"lv2-08", ch:2, q:"10進数の数え方として正しいものはどれか。\n..., 97, 98, 99, ［　　　］, 101, ...", answer:"100", choices:["9A","100","1000","999"], explanation:"10進数で 99 の次は 100 です。" },
+    { id:"lv2-09", ch:2, q:"10進数の数え方として正しいものはどれか。\n..., 253, 254, 255, ［　　　］, 257, ...", answer:"256", choices:["25F","256","300","1000"], explanation:"10進数で 255 の次は 256 です。コンピュータでよく出てくる値です（2⁸=256）。" },
+    { id:"lv2-10", ch:2, q:"16進数の数え方として正しいものはどれか。\n..., 8, 9, ［　　　］, B, C, ...", answer:"A", choices:["10","A","a","X"], explanation:"16進数では 9 の次は A（10進数の10）です。10〜15 は A〜F で表します。" },
+    { id:"lv2-11", ch:2, q:"16進数の数え方として正しいものはどれか。\n..., D, E, F, ［　　　］, 11, ...", answer:"10", choices:["G","10","16","FF"], explanation:"16進数で F の次は 10 です。10進数の「16」に相当します。G という文字は16進数では使いません。" },
+    { id:"lv2-12", ch:2, q:"16進数の数え方として正しいものはどれか。\n..., FD, FE, FF, ［　　　］, 101, ...", answer:"100", choices:["FFF","100","GG","1000"], explanation:"16進数で FF の次は 100 です。10進数の「256」に相当します。" },
+    { id:"lv2-13", ch:3, q:"以下は同じ数値を表しています。\n5(10) ／ 101(2) ／ ［X］(8) ／ 5(16)\nXに入る適切な8進数を選びなさい。", answer:"5", choices:["3","5","8","101"], explanation:"10進数の5は、8進数でも「5」です。8進数は 0〜7 の数字をそのまま使えるので、5以下の数は他の進数と同じ表記になります。" },
+    { id:"lv2-14", ch:3, q:"以下は同じ数値を表しています。\n10(10) ／ 1010(2) ／ 12(8) ／ ［X］(16)\nXに入る適切な16進数を選びなさい。", answer:"A", choices:["9","A","10","F"], explanation:"10進数の10は16進数で「A」です。16進数では10〜15をA〜Fで表します。" },
+    { id:"lv2-15", ch:3, q:"以下は同じ数値を表しています。\n15(10) ／ 1111(2) ／ ［X］(8) ／ F(16)\nXに入る適切な8進数を選びなさい。", answer:"17", choices:["15","17","1F","20"], explanation:"10進数の15は8進数で「17」です。1×8+7=15 で確認できます。" },
+    { id:"lv2-16", ch:3, q:"以下は同じ数値を表しています。\n64(10) ／ 1000000(2) ／ 100(8) ／ ［X］(16)\nXに入る適切な16進数を選びなさい。", answer:"40", choices:["40","4F","64","100"], explanation:"10進数の64は16進数で「40」です。4×16+0=64 で確認できます。" }
+  ],
+  3: [
+    { id:"lv3-01", ch:4, q:"1011(2) を10進数に変換すると？", answer:"11", choices:["9","11","13","1011"], explanation:"1×2³ + 0×2² + 1×2¹ + 1×2⁰\n= 8 + 0 + 2 + 1\n= 11" },
+    { id:"lv3-02", ch:4, q:"11010(2) を10進数に変換すると？", answer:"26", choices:["22","24","26","28"], explanation:"1×2⁴ + 1×2³ + 0×2² + 1×2¹ + 0×2⁰\n= 16 + 8 + 0 + 2 + 0\n= 26" },
+    { id:"lv3-03", ch:4, q:"10110111(2) を10進数に変換すると？", answer:"183", choices:["163","173","183","193"], explanation:"1×2⁷+0×2⁶+1×2⁵+1×2⁴+0×2³+1×2²+1×2¹+1×2⁰\n= 128+0+32+16+0+4+2+1\n= 183" },
+    { id:"lv3-04", ch:4, q:"17(8) を10進数に変換すると？", answer:"15", choices:["13","14","15","17"], explanation:"1×8¹ + 7×8⁰\n= 8 + 7\n= 15" },
+    { id:"lv3-05", ch:4, q:"53(8) を10進数に変換すると？", answer:"43", choices:["39","41","43","53"], explanation:"5×8¹ + 3×8⁰\n= 40 + 3\n= 43" },
+    { id:"lv3-06", ch:4, q:"347(8) を10進数に変換すると？", answer:"231", choices:["199","215","231","247"], explanation:"3×8² + 4×8¹ + 7×8⁰\n= 192 + 32 + 7\n= 231" },
+    { id:"lv3-07", ch:4, q:"1C(16) を10進数に変換すると？", answer:"28", choices:["18","24","28","30"], explanation:"1×16¹ + C×16⁰　※C=12\n= 16 + 12\n= 28" },
+    { id:"lv3-08", ch:4, q:"3F(16) を10進数に変換すると？", answer:"63", choices:["57","61","63","65"], explanation:"3×16¹ + F×16⁰　※F=15\n= 48 + 15\n= 63" },
+    { id:"lv3-09", ch:4, q:"A8(16) を10進数に変換すると？", answer:"168", choices:["158","162","168","174"], explanation:"A×16¹ + 8×16⁰　※A=10\n= 160 + 8\n= 168" }
+  ],
+  4: [
+    { id:"lv4-01", ch:5, q:"13(10) を2進数に変換すると？", answer:"1101", choices:["1011","1100","1101","1110"], explanation:"13÷2=6 余り1\n6÷2=3 余り0\n3÷2=1 余り1\n1÷2=0 余り1\n余りを下から読む → 1101" },
+    { id:"lv4-02", ch:5, q:"26(10) を2進数に変換すると？", answer:"11010", choices:["10110","11000","11010","11100"], explanation:"26÷2=13 余り0\n13÷2=6 余り1\n6÷2=3 余り0\n3÷2=1 余り1\n1÷2=0 余り1\n余りを下から読む → 11010" },
+    { id:"lv4-03", ch:5, q:"200(10) を2進数に変換すると？", answer:"11001000", choices:["10110000","11000100","11001000","11010000"], explanation:"200÷2=100 余り0\n100÷2=50 余り0\n50÷2=25 余り0\n25÷2=12 余り1\n12÷2=6 余り0\n6÷2=3 余り0\n3÷2=1 余り1\n1÷2=0 余り1\n余りを下から読む → 11001000" },
+    { id:"lv4-04", ch:5, q:"15(10) を8進数に変換すると？", answer:"17", choices:["15","17","1F","20"], explanation:"15÷8=1 余り7\n1÷8=0 余り1\n余りを下から読む → 17" },
+    { id:"lv4-05", ch:5, q:"100(10) を8進数に変換すると？", answer:"144", choices:["124","134","144","154"], explanation:"100÷8=12 余り4\n12÷8=1 余り4\n1÷8=0 余り1\n余りを下から読む → 144" },
+    { id:"lv4-06", ch:5, q:"255(10) を8進数に変換すると？", answer:"377", choices:["357","367","377","FF"], explanation:"255÷8=31 余り7\n31÷8=3 余り7\n3÷8=0 余り3\n余りを下から読む → 377" },
+    { id:"lv4-07", ch:5, q:"28(10) を16進数に変換すると？", answer:"1C", choices:["18","1A","1C","1E"], explanation:"28÷16=1 余り12\n12 → C\n1÷16=0 余り1\n余りを下から読む → 1C" },
+    { id:"lv4-08", ch:5, q:"175(10) を16進数に変換すると？", answer:"AF", choices:["9F","AF","BF","10F"], explanation:"175÷16=10 余り15\n15 → F、10 → A\n余りを下から読む → AF" },
+    { id:"lv4-09", ch:5, q:"256(10) を16進数に変換すると？", answer:"100", choices:["FF","100","10F","1FF"], explanation:"256÷16=16 余り0\n16÷16=1 余り0\n1÷16=0 余り1\n余りを下から読む → 100" }
+  ]
+};
+
+const CH_LABEL = { 1:"CH1", 2:"CH2-3", 3:"CH4", 4:"CH5" };
+const BADGE = {
+  1:{icon:"🔰",name:"CH1クリアバッジ"},
+  2:{icon:"📊",name:"CH2-3クリアバッジ"},
+  3:{icon:"⚡",name:"CH4クリアバッジ"},
+  4:{icon:"🏆",name:"CH5クリアバッジ"}
+};
+
+/* state */
+let currentQuiz = 1, questions = [], statuses = [], chosen = [], current = 0;
+const $ = id => document.getElementById(id);
+
+/* 参照テーブル */
+for (let i = 0; i <= 16; i++) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${i}</td><td class="bin">${i.toString(2).padStart(4,'0')}</td><td>${i.toString(8)}</td><td class="hex">${i.toString(16).toUpperCase()}</td>`;
+  $('refTableBody').appendChild(tr);
+}
+
+/* CHAPTERタブ */
+function switchChTab(ch) {
+  document.querySelectorAll('.ch-tab').forEach(t => {
+    t.className = 'ch-tab';
+    if (parseInt(t.dataset.ch) === ch) t.classList.add(`active-ch${ch}`);
+  });
+  document.querySelectorAll('.ch-panel').forEach(p => p.classList.remove('show'));
+  $(`panel-ch${ch}`).classList.add('show');
+}
+document.querySelectorAll('.ch-tab').forEach(tab => {
+  tab.addEventListener('click', () => switchChTab(parseInt(tab.dataset.ch)));
+});
+
+/* 動画再生 */
+for (let ch = 1; ch <= 5; ch++) {
+  const wrap = $(`vwrap-ch${ch}`), thumb = $(`vthumb-ch${ch}`);
+  wrap.addEventListener('click', () => {
+    window.open(`https://www.youtube.com/shorts/${YOUTUBE_IDS['ch'+ch]}`, '_blank');
+  });
+}
+switchChTab(1);
+
+/* 問題セレクタ */
+document.querySelectorAll('.quiz-sel-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.quiz-sel-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    startQuiz(parseInt(btn.dataset.quiz));
+    $('quizArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+function startQuiz(quizNum) {
+  currentQuiz = quizNum;
+  questions   = QUESTIONS[quizNum];
+  statuses    = Array(questions.length).fill(null);
+  chosen      = Array(questions.length).fill(null);
+  current     = 0;
+  $('scoreBox').className = 'score-box';
+  $('scoreBox').innerHTML = '';
+  renderPanel();
+  renderQuestion();
+}
+
+function renderPanel() {
+  const panel = $('qPanel');
+  panel.innerHTML = '';
+  questions.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'q-dot';
+    if (i === current)         dot.classList.add('current');
+    if (statuses[i] === true)  dot.classList.add('correct');
+    if (statuses[i] === false) dot.classList.add('wrong');
+    dot.textContent = i + 1;
+    dot.title = statuses[i] === null ? '未回答' : statuses[i] ? '正解' : '不正解';
+    dot.addEventListener('click', () => jumpTo(i));
+    panel.appendChild(dot);
+  });
+  const legend = document.createElement('div');
+  legend.className = 'q-legend';
+  legend.innerHTML = `
+    <div class="q-legend-item"><div class="q-legend-sw u"></div>未回答</div>
+    <div class="q-legend-item"><div class="q-legend-sw c"></div>正解</div>
+    <div class="q-legend-item"><div class="q-legend-sw w"></div>不正解</div>`;
+  panel.appendChild(legend);
+}
+
+function jumpTo(idx) {
+  $('scoreBox').className = 'score-box';
+  $('scoreBox').innerHTML = '';
+  current = idx;
+  renderPanel();
+  renderQuestion();
+  $('quizArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function findNextUnanswered() {
+  for (let i = current + 1; i < questions.length; i++) if (statuses[i] === null) return i;
+  for (let i = 0; i < current; i++)                    if (statuses[i] === null) return i;
+  return null;
+}
+
+function renderQuestion() {
+  const area = $('quizArea');
+  area.innerHTML = '';
+  if (!questions.length) return;
+  const q = questions[current];
+  const isDone = statuses[current] !== null;
+  const chClass = `ch${currentQuiz}`;
+  const card = document.createElement('div');
+  card.className = `quiz-card ${chClass}`;
+  const qHtml = q.q.replace(/［　　　］/g, '<span class="blank">　　　</span>');
+  card.innerHTML = `
+    <div class="quiz-meta">
+      <span class="quiz-ch-badge ${chClass}">${CH_LABEL[currentQuiz]}</span>
+      <span class="quiz-num">Q${current + 1} / ${questions.length}</span>
+    </div>
+    <div class="quiz-question">${qHtml}</div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>`;
+  area.appendChild(card);
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'next-btn'; nextBtn.id = 'nextBtn';
+  nextBtn.addEventListener('click', () => {
+    const next = findNextUnanswered();
+    if (next !== null) jumpTo(next); else showScore();
+  });
+  area.appendChild(nextBtn);
+  const choicesEl = $('choices');
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn'; btn.textContent = c;
+    btn.addEventListener('click', () => handleAnswer(btn, c, q));
+    choicesEl.appendChild(btn);
+  });
+  if (isDone) restoreState(q);
+}
+
+function restoreState(q) {
+  const isCorrect = statuses[current], userChoice = chosen[current];
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.answer) b.classList.add(isCorrect ? 'correct' : 'reveal');
+    else if (b.textContent === userChoice && !isCorrect) b.classList.add('wrong');
+  });
+  showFeedback(isCorrect, q);
+  updateNextBtn();
+}
+
+function handleAnswer(btn, userChoice, q) {
+  if (statuses[current] !== null) return;
+  const isCorrect = userChoice === q.answer;
+  statuses[current] = isCorrect; chosen[current] = userChoice;
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.answer) b.classList.add(isCorrect ? 'correct' : 'reveal');
+  });
+  if (!isCorrect) btn.classList.add('wrong');
+  showFeedback(isCorrect, q);
+  renderPanel();
+  updateNextBtn();
+}
+
+function showFeedback(isCorrect, q) {
+  const fb = $('feedback');
+  fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'ng');
+  fb.textContent = isCorrect ? '✓ 正解！\n' + q.explanation : '✗ 不正解。正解: ' + q.answer + '\n' + q.explanation;
+}
+
+function updateNextBtn() {
+  const nb = $('nextBtn');
+  if (!nb) return;
+  nb.textContent = findNextUnanswered() !== null ? '次の未回答へ →' : '結果を見る';
+  nb.classList.add('show');
+}
+
+function showScore() {
+  $('quizArea').innerHTML = '';
+  const correct = statuses.filter(s => s === true).length;
+  const total = questions.length;
+  const pct = correct / total;
+  const badge = BADGE[currentQuiz];
+  const box = $('scoreBox');
+  box.innerHTML = `
+    <div class="score-label">RESULT · ${CH_LABEL[currentQuiz]}</div>
+    <div class="score-value">${correct}<span>/${total}</span></div>
+    ${pct === 1 ? `<div class="badge-wrap"><div class="badge-icon">${badge.icon}</div><div class="badge-name">${badge.name}</div></div>` : ''}
+    <div class="score-msg">${scoreMsg(pct, currentQuiz)}</div>
+    <div class="score-btns">
+      <button class="retry-btn" id="retryBtn">もう一度挑戦する</button>
+      <a class="home-btn" href="https://ripimon.github.io/ripmon/">← リピ問 top へ戻る</a>
+    </div>`;
+  box.className = 'score-box show';
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('retryBtn').addEventListener('click', () => startQuiz(currentQuiz));
+}
+
+function scoreMsg(pct, quizNum) {
+  if (pct === 1)  return `🎉 パーフェクト！${quizNum < 4 ? '次のCHAPTERにも挑戦しよう！' : '進数変換を完全マスターしました！'}`;
+  if (pct >= 0.8) return '✨ 優秀！あと少しで完璧。間違えた問題を確認しよう。';
+  if (pct >= 0.6) return '📖 もう一息。解説を読んで再チャレンジしよう。';
+  return '💡 解説動画をもう一度見てから再チャレンジしよう。';
+}
+
+/* init */
+const firstBtn = document.querySelector('.quiz-sel-btn');
+if (firstBtn) { firstBtn.classList.add('active'); startQuiz(1); }
+</script>
+</body>
+</html>
