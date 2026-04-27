@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ===== SEO ===== -->
+<title>リピ問 / ripimon | IT入門を繰り返し練習する</title>
+<meta name="description" content="IT資格を多数取得した元システムエンジニアが、進数変換・論理回路・SQL・Linuxコマンドなど情報処理技術者試験の頻出テーマをかみ砕いて解説。4択ドリルで繰り返し練習して確実に定着。">
+<meta name="keywords" content="情報処理技術者試験,基本情報技術者,進数変換,2進数,16進数,論理回路,SQL,Linuxコマンド,ネットワーク,練習問題,ドリル,4択,IT入門,ripimon,リピ問">
+<meta property="og:title" content="リピ問 / ripimon | IT入門を繰り返し練習する">
+<meta property="og:description" content="IT資格を多数取得した元SEがIT入門をかみ砕いて解説。情報処理技術者試験対応4択ドリル。繰り返し練習が、あなたの自信につながる。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://ripimon.github.io/ripmon/ripimon_banner.png">
+<link rel="canonical" href="https://ripimon.github.io/ripmon/">
+<!-- ===== SEO ここまで ===== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- ===== GA4 =====
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+===== GA4 ここまで ===== -->
+
+<style>
+  :root {
+    --bg:      #0a0e14;
+    --surface: #111820;
+    --surface2:#192130;
+    --border:  #1d3040;
+    --accent:  #00e5ff;
+    --text:    #c8d8e8;
+    --text-dim:#4e6878;
+    --mono:    'Share Tech Mono', monospace;
+    --sans:    'Noto Sans JP', sans-serif;
+    --radius:  14px;
+    --glow:    0 0 24px rgba(0,229,255,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+    background-size: 44px 44px; pointer-events: none;
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
+    pointer-events: none;
+  }
+
+  /* ── banner ── */
+  .banner-wrap {
+    position: relative; z-index: 10;
+    width: 100%;
+    aspect-ratio: 16/9;
+    max-height: 240px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .banner-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  /* バナー上にサイト名オーバーレイ */
+  .banner-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(10,14,20,0.72) 0%, rgba(10,14,20,0.2) 60%, transparent 100%);
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 18px 20px;
+  }
+  .banner-logo {
+    font-family: var(--mono);
+    font-size: clamp(20px, 5vw, 30px);
+    color: #fff;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+  }
+  .banner-logo em { font-style: normal; color: var(--accent); }
+  .banner-logo-sub {
+    font-family: var(--mono);
+    font-size: clamp(9px, 2vw, 11px);
+    color: rgba(200,216,232,0.7);
+    letter-spacing: 2px;
+    margin-top: 3px;
+  }
+
+  /* ── tagline ── */
+  .tagline-wrap {
+    position: relative; z-index: 10;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+  }
+  .tagline-inner { max-width: 640px; margin: 0 auto; }
+  .tagline-main {
+    font-size: clamp(13px, 3.5vw, 15px);
+    color: var(--text);
+    line-height: 1.9;
+  }
+  .tagline-main em { font-style: normal; color: var(--accent); font-weight: 700; }
+
+  /* ── main ── */
+  main {
+    position: relative; z-index: 10;
+    max-width: 640px; margin: 0 auto;
+    padding: 22px 14px 72px;
+    display: flex; flex-direction: column; gap: 24px;
+  }
+
+  /* ── section label ── */
+  .sec-label { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+  .sec-label .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+  .sec-label span { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; white-space: nowrap; }
+
+  /* ── stats strip ── */
+  .info-strip { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .info-item { flex: 1; padding: 13px 8px; display: flex; flex-direction: column; align-items: center; gap: 3px; border-right: 1px solid var(--border); }
+  .info-item:last-child { border-right: none; }
+  .info-num { font-family: var(--mono); font-size: 18px; color: var(--accent); line-height: 1; }
+  .info-label { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; text-align: center; }
+
+  /* ── unit grid ── */
+  .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ── unit card ── */
+  .unit-card {
+    position: relative; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 14px 46px;
+    text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; gap: 7px; overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    animation: fadeUp 0.5s ease both;
+  }
+  .unit-card:hover  { border-color: rgba(0,229,255,0.35); box-shadow: var(--glow); transform: translateY(-2px); }
+  .unit-card:active { transform: scale(0.97); }
+
+  .unit-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .c-cyan::before   { background: linear-gradient(90deg,#00e5ff,transparent); }
+  .c-orange::before { background: linear-gradient(90deg,#ff6b35,transparent); }
+  .c-yellow::before { background: linear-gradient(90deg,#ffd166,transparent); }
+  .c-green::before  { background: linear-gradient(90deg,#7cff6b,transparent); }
+  .c-purple::before { background: linear-gradient(90deg,#c87cff,transparent); }
+  .c-teal::before   { background: linear-gradient(90deg,#6bffd4,transparent); }
+  .c-pink::before   { background: linear-gradient(90deg,#ff6bbd,transparent); }
+
+  .unit-card.coming-soon { opacity: 0.38; pointer-events: none; }
+  .coming-tag {
+    position: absolute; top: 9px; right: 9px;
+    font-family: var(--mono); font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);
+    color: var(--text-dim); background: var(--surface2);
+  }
+
+  .unit-icon { font-size: 24px; line-height: 1; }
+  .unit-title {
+    font-family: var(--mono);
+    font-size: clamp(11px, 2.8vw, 13px);
+    color: #fff; letter-spacing: 0.3px; line-height: 1.5;
+  }
+
+  .unit-bottom {
+    position: absolute; bottom: 13px; left: 14px; right: 13px;
+    display: flex; align-items: center; justify-content: flex-end;
+  }
+  .unit-arrow { font-family: var(--mono); font-size: 14px; color: var(--text-dim); transition: color 0.2s, transform 0.2s; }
+  .unit-card:hover .unit-arrow { color: var(--accent); transform: translate(2px,-2px); }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .unit-card:nth-child(1){animation-delay:0.04s}
+  .unit-card:nth-child(2){animation-delay:0.09s}
+  .unit-card:nth-child(3){animation-delay:0.14s}
+  .unit-card:nth-child(4){animation-delay:0.19s}
+  .unit-card:nth-child(5){animation-delay:0.24s}
+  .unit-card:nth-child(6){animation-delay:0.29s}
+  .unit-card:nth-child(7){animation-delay:0.34s}
+
+  /* ── footer ── */
+  footer {
+    position: relative; z-index: 10;
+    text-align: center; padding: 18px;
+    font-family: var(--mono); font-size: 10px; color: var(--text-dim);
+    letter-spacing: 2px; border-top: 1px solid var(--border);
+  }
+
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- バナー -->
+<div class="banner-wrap">
+  <img src="ripimon_banner.png" alt="リピ問 / ripimon バナー">
+  <div class="banner-overlay">
+    <div class="banner-logo"><em>リピ問</em> / ripimon</div>
+    <div class="banner-logo-sub">IT入門を繰り返し練習する</div>
+  </div>
+</div>
+
+<!-- キャッチコピー -->
+<div class="tagline-wrap">
+  <div class="tagline-inner">
+    <div class="tagline-main">
+      繰り返し練習が、<em>あなたの自信につながる。</em><br>
+      ITが苦手な人のための、IT入門チャンネル。<br>
+      IT資格を多数取得した元システムエンジニアが、<br>
+      IT入門をかみ砕いて解説し、あなたの理解をサポートします。
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- stats -->
+  <div class="info-strip">
+    <div class="info-item"><div class="info-num">7</div><div class="info-label">単元</div></div>
+    <div class="info-item"><div class="info-num">46+</div><div class="info-label">問題数</div></div>
+    <div class="info-item"><div class="info-num">4択</div><div class="info-label">形式</div></div>
+    <div class="info-item"><div class="info-num">無料</div><div class="info-label">完全無料</div></div>
+  </div>
+
+  <!-- unit list -->
+  <section>
+    <div class="sec-label">
+      <span>単元を選ぶ</span>
+      <div class="line"></div>
+    </div>
+    <div class="unit-grid">
+
+      <!-- 公開済み -->
+      <a class="unit-card c-cyan" href="units/radix.html">
+        <div class="unit-icon">🔢</div>
+        <div class="unit-title">2進数って何？進数を知って、進数の変換をしてみよう。</div>
+        <div class="unit-bottom"><span class="unit-arrow">↗</span></div>
+      </a>
+
+      <!-- Coming Soon -->
+      <a class="unit-card c-orange coming-soon" href="#">
+        <div class="coming-tag">Coming Soon</div>
+        <div class="unit-icon">➕</div>
+        <div class="unit-title">補数表現</div>
+        <div class="unit-bottom"><span class="unit-arrow">↗</span></div>
+      </a>
+
+      <a class="unit-card c-yellow coming-soon" href="#">
+        <div class="coming-tag">Coming Soon</div>
+        <div class="unit-icon">🌊</div>
+        <div class="unit-title">浮動小数点数</div>
+        <div class="unit-bottom"><span class="unit-arrow">↗</span></div>
+      </a>
+
+      <a class="unit-card c-green coming-soon" href="#">
+        <div class="coming-tag">Coming Soon</div>
+        <div class="unit-icon">🌐</div>
+        <div class="unit-title">ネットワーク<br>アドレス計算</div>
+        <div class="unit-bottom"><span class="unit-arrow">↗</span></div>
+      </a>
+
+      <a class="unit-card c-purple coming-soon" href="#">
+        <div class="coming-tag">Coming Soon</div>
+        <div class="unit-icon">⚡</div>
+        <div class="unit-title">論理回路</div>
+        <div class="unit-bottom"><span class="unit-arrow">↗</span></div>
+      </a>
+
+      <a class="unit-card c-teal coming-soon" href="#">
+        <div class="coming-tag">Coming Soon</div>
+        <div class="unit-icon">🗄️</div>
+        <div class="unit-title">SQL</div>
+        <div class="unit-bottom"><span class="unit-arrow">↗</span></div>
+      </a>
+
+      <a class="unit-card c-pink coming-soon" href="#">
+        <div class="coming-tag">Coming Soon</div>
+        <div class="unit-icon">🐧</div>
+        <div class="unit-title">Linuxコマンド</div>
+        <div class="unit-bottom"><span class="unit-arrow">↗</span></div>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>© リピ問 / ripimon</footer>
+
+</body>
+</html>
