@@ -21,13 +21,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BKW8CQLWBN"></script>
+<!-- ===== GA4 =====
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-BKW8CQLWBN');
+  gtag('config', 'G-XXXXXXXXXX');
 </script>
+===== GA4 ここまで ===== -->
 
 <style>
   :root {
@@ -304,7 +306,7 @@
 
   <!-- ② CHAPTERと問題を選ぶ -->
   <section>
-    <div class="sec-label"><div class="dot"></div><h2>CHAPTERと問題を選ぶ</h2></div>
+    <div class="sec-label"><div class="dot"></div><h2>解説動画を見たら、問題を解いてみよう</h2></div>
     <div class="quiz-select-grid">
       <button class="quiz-sel-btn ch1" data-quiz="1">
         <span class="qsb-ch">CH1</span>
@@ -444,6 +446,9 @@ for (let i = 0; i <= 16; i++) {
   $('refTableBody').appendChild(tr);
 }
 
+/* CH番号 → 問題セレクタのquiz番号の対応 */
+const CH_TO_QUIZ = { 1:1, 2:2, 3:2, 4:3, 5:4 };
+
 /* CHAPTERタブ */
 function switchChTab(ch) {
   document.querySelectorAll('.ch-tab').forEach(t => {
@@ -452,6 +457,13 @@ function switchChTab(ch) {
   });
   document.querySelectorAll('.ch-panel').forEach(p => p.classList.remove('show'));
   $(`panel-ch${ch}`).classList.add('show');
+
+  /* 対応する問題セレクタを自動選択 */
+  const quizNum = CH_TO_QUIZ[ch];
+  document.querySelectorAll('.quiz-sel-btn').forEach(b => b.classList.remove('active'));
+  const targetBtn = document.querySelector(`.quiz-sel-btn[data-quiz="${quizNum}"]`);
+  if (targetBtn) targetBtn.classList.add('active');
+  startQuiz(quizNum);
 }
 document.querySelectorAll('.ch-tab').forEach(tab => {
   tab.addEventListener('click', () => switchChTab(parseInt(tab.dataset.ch)));
@@ -464,15 +476,13 @@ for (let ch = 1; ch <= 5; ch++) {
     window.open(`https://www.youtube.com/shorts/${YOUTUBE_IDS['ch'+ch]}`, '_blank');
   });
 }
-switchChTab(1);
 
-/* 問題セレクタ */
+/* 問題セレクタ（単独タップでも切り替え可能） */
 document.querySelectorAll('.quiz-sel-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.quiz-sel-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     startQuiz(parseInt(btn.dataset.quiz));
-    $('quizArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
 
@@ -517,7 +527,6 @@ function jumpTo(idx) {
   current = idx;
   renderPanel();
   renderQuestion();
-  $('quizArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function findNextUnanswered() {
@@ -617,7 +626,6 @@ function showScore() {
       <a class="home-btn" href="https://ripimon.github.io/ripmon/">← リピ問 top へ戻る</a>
     </div>`;
   box.className = 'score-box show';
-  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
   $('retryBtn').addEventListener('click', () => startQuiz(currentQuiz));
 }
 
@@ -629,8 +637,7 @@ function scoreMsg(pct, quizNum) {
 }
 
 /* init */
-const firstBtn = document.querySelector('.quiz-sel-btn');
-if (firstBtn) { firstBtn.classList.add('active'); startQuiz(1); }
+switchChTab(1);
 </script>
 </body>
 </html>
