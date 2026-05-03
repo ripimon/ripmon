@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ===== SEO ===== -->
+<title>コンピュータの足し算・引き算を知ろう。補数って何？| リピ問 / ripimon</title>
+<meta name="description" content="2進数の足し算・引き算、補数（1の補数・2の補数）、オーバーフロー・アンダーフローを4択ドリルで繰り返し練習。情報処理技術者試験対応。">
+<meta name="keywords" content="2進数,補数,オーバーフロー,アンダーフロー,情報処理技術者試験,基本情報技術者,練習問題,4択,ドリル,ripimon,リピ問">
+<meta name="author" content="リピ問 / ripimon">
+<meta name="robots" content="index, follow">
+<!-- ===== SEO ここまで ===== -->
+
+<!-- ===== GA4 =====
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BKW8CQLWBN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BKW8CQLWBN');
+</script>
+===== GA4 ここまで ===== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:      #0a0e14;
+    --surface: #121820;
+    --surface2:#1a2230;
+    --border:  #1e3040;
+    --accent:  #00e5ff;
+    --accent3: #7cff6b;
+    --text:    #c8d8e8;
+    --text-dim:#5a7080;
+    --mono:    'Share Tech Mono', monospace;
+    --sans:    'Noto Sans JP', sans-serif;
+    --radius:  12px;
+    --glow:    0 0 20px rgba(0,229,255,0.15);
+    --ch1: #00e5ff;
+    --ch2: #ff6b35;
+    --ch3: #7cff6b;
+    --ch4: #ffd166;
+    --ch5: #c87cff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none;
+  }
+
+  /* ── header ── */
+  header {
+    position: relative; z-index: 10;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(0,229,255,0.06) 0%, transparent 100%);
+  }
+  .header-inner { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
+  .breadcrumb { display: flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 10px; color: var(--text-dim); flex-wrap: wrap; }
+  .breadcrumb a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb .sep { color: var(--border); }
+  .unit-title-head { font-size: clamp(13px, 3.5vw, 16px); color: #fff; line-height: 1.5; font-weight: 700; }
+
+  /* ── main ── */
+  main { position: relative; z-index: 10; max-width: 600px; margin: 0 auto; padding: 16px 14px 60px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── section label ── */
+  .sec-label { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .sec-label .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 7px var(--accent); flex-shrink: 0; }
+  .sec-label h2 { font-size: 11px; font-family: var(--mono); color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ── chapter tabs (縦並び) ── */
+  .ch-tabs { display: flex; flex-direction: column; gap: 8px; }
+  .ch-tab { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); font-family: var(--mono); font-size: 12px; color: var(--text-dim); cursor: pointer; transition: all 0.2s; user-select: none; text-align: left; }
+  .ch-tab:hover { border-color: rgba(0,229,255,0.3); color: var(--text); }
+  .ch-tab.active-ch1 { border-color: var(--ch1); color: var(--ch1); background: rgba(0,229,255,0.08); }
+  .ch-tab.active-ch2 { border-color: var(--ch2); color: var(--ch2); background: rgba(255,107,53,0.08); }
+  .ch-tab.active-ch3 { border-color: var(--ch3); color: var(--ch3); background: rgba(124,255,107,0.08); }
+
+  /* ── video panel ── */
+  .ch-panel { display: none; flex-direction: column; gap: 0; }
+  .ch-panel.show { display: flex; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .video-wrap { position: relative; width: 100%; overflow: hidden; cursor: pointer; }
+  .video-wrap.short { aspect-ratio: 16/9; max-width: 100%; margin: 0 auto; }
+  .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: none; }
+  .video-thumb { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg,#0d1822,#0a1420); }
+  .video-thumb::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
+  .video-thumb .play-btn, .video-thumb p { position: relative; z-index: 1; }
+  .play-btn { width: 52px; height: 52px; border-radius: 50%; background: rgba(0,229,255,0.18); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .play-btn:hover { background: rgba(0,229,255,0.35); box-shadow: var(--glow); }
+  .play-btn svg { fill: var(--accent); margin-left: 4px; }
+  .video-thumb p { font-size: 11px; color: #fff; font-family: var(--mono); text-align: center; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+  .video-caption { padding: 9px 13px; font-size: 11px; color: var(--text-dim); font-family: var(--mono); border-top: 1px solid var(--border); background: var(--surface2); }
+  .card.border-ch1 { border-color: rgba(0,229,255,0.3); }
+  .card.border-ch2 { border-color: rgba(255,107,53,0.3); }
+  .card.border-ch3 { border-color: rgba(124,255,107,0.3); }
+
+  /* ── quiz selector ── */
+  .quiz-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .quiz-sel-btn { padding: 11px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; display: flex; flex-direction: column; gap: 3px; transition: all 0.2s; text-align: left; -webkit-tap-highlight-color: transparent; }
+  .quiz-sel-btn:hover { border-color: rgba(0,229,255,0.3); }
+  .quiz-sel-btn.active.ch1 { border-color: var(--ch1); background: rgba(0,229,255,0.06); box-shadow: 0 0 12px rgba(0,229,255,0.1); }
+  .quiz-sel-btn.active.ch2 { border-color: var(--ch2); background: rgba(255,107,53,0.06); }
+  .quiz-sel-btn.active.ch3 { border-color: var(--ch3); background: rgba(124,255,107,0.06); }
+  .qsb-ch { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; padding: 2px 7px; border-radius: 4px; border: 1px solid; display: inline-block; width: fit-content; margin-bottom: 2px; }
+  .ch1 .qsb-ch { color: var(--ch1); border-color: rgba(0,229,255,0.35); background: rgba(0,229,255,0.07); }
+  .ch2 .qsb-ch { color: var(--ch2); border-color: rgba(255,107,53,0.35); background: rgba(255,107,53,0.07); }
+  .ch3 .qsb-ch { color: var(--ch3); border-color: rgba(124,255,107,0.35); background: rgba(124,255,107,0.07); }
+  .qsb-name { font-family: var(--mono); font-size: 11px; color: #fff; line-height: 1.4; }
+  .qsb-count { font-family: var(--mono); font-size: 9px; color: var(--text-dim); }
+
+  /* ── question panel ── */
+  .q-panel { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .q-dot { width: 34px; height: 34px; border-radius: 6px; border: 1px solid var(--border); background: #1e2c3a; font-family: var(--mono); font-size: 12px; color: var(--text-dim); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.18s; user-select: none; }
+  .q-dot:hover { border-color: rgba(0,229,255,0.4); color: var(--accent); }
+  .q-dot.current { border-color: var(--accent) !important; color: var(--accent) !important; box-shadow: 0 0 10px rgba(0,229,255,0.25); background: rgba(0,229,255,0.1) !important; }
+  .q-dot.correct { background: #163324; border-color: #3aff6b45; color: #7cff6b; }
+  .q-dot.wrong   { background: #2e1515; border-color: #ff444445; color: #ff7070; }
+  .q-legend { width: 100%; display: flex; gap: 14px; margin-top: 2px; padding-top: 9px; border-top: 1px solid var(--border); }
+  .q-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; font-family: var(--mono); color: var(--text-dim); }
+  .q-legend-sw { width: 11px; height: 11px; border-radius: 3px; border: 1px solid; }
+  .q-legend-sw.u { background: #1e2c3a; border-color: var(--border); }
+  .q-legend-sw.c { background: #163324; border-color: #3aff6b45; }
+  .q-legend-sw.w { background: #2e1515; border-color: #ff444445; }
+
+  /* ── quiz card ── */
+  .quiz-area { display: flex; flex-direction: column; gap: 12px; }
+  .quiz-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; position: relative; overflow: hidden; }
+  .quiz-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .quiz-card.ch1::before { background: linear-gradient(90deg,var(--ch1),transparent); }
+  .quiz-card.ch2::before { background: linear-gradient(90deg,var(--ch2),transparent); }
+  .quiz-card.ch3::before { background: linear-gradient(90deg,var(--ch3),transparent); }
+
+  .quiz-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .quiz-ch-badge { font-family: var(--mono); font-size: 9px; padding: 2px 8px; border-radius: 4px; border: 1px solid; letter-spacing: 2px; text-transform: uppercase; }
+  .quiz-ch-badge.ch1 { color: var(--ch1); border-color: rgba(0,229,255,0.35); background: rgba(0,229,255,0.07); }
+  .quiz-ch-badge.ch2 { color: var(--ch2); border-color: rgba(255,107,53,0.35); background: rgba(255,107,53,0.07); }
+  .quiz-ch-badge.ch3 { color: var(--ch3); border-color: rgba(124,255,107,0.35); background: rgba(124,255,107,0.07); }
+  .quiz-num { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+
+  .quiz-question { font-size: clamp(12px,3vw,14px); color: var(--text); margin-bottom: 14px; line-height: 1.85; white-space: pre-line; }
+  .quiz-question .blank { font-family: var(--mono); font-size: 14px; color: #fff; background: var(--surface2); padding: 1px 10px; border-radius: 4px; border: 1px solid var(--border); display: inline-block; }
+
+  /* ── 筆算ブロック ── */
+  .calc-block { font-family: var(--mono); font-size: 15px; line-height: 1; margin: 10px 0 14px; display: inline-block; }
+  .calc-row { display: flex; align-items: center; }
+  .calc-op  { min-width: 1.4em; text-align: right; color: var(--text-dim); padding-right: 6px; }
+  .calc-op.add { color: #00e5ff88; }
+  .calc-op.sub { color: #ff6b3588; }
+  .calc-digit { min-width: 1.8em; text-align: center; color: var(--text); }
+  .calc-blank { min-width: 1.8em; text-align: center;
+    color: var(--accent); font-weight: bold; font-size: 1.1em;
+    border-radius: 3px;
+    box-shadow: 0 0 6px rgba(0,229,255,0.35);
+    line-height: 1.5; display: inline-block; }
+  .calc-line  { border-top: 1px solid var(--border); margin: 4px 0; width: 100%; }
+  .calc-result .calc-digit { color: var(--accent3); }
+  .calc-hint { font-size: 11px; color: var(--text-dim); margin-bottom: 10px; font-family: var(--mono); }
+
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .choice-btn { padding: 11px 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: var(--mono); font-size: clamp(12px,3vw,14px); cursor: pointer; transition: all 0.15s; text-align: center; white-space: pre-line; line-height: 1.4; }
+  .choice-btn:active { transform: scale(0.97); }
+  .choice-btn:hover:not(:disabled) { border-color: rgba(0,229,255,0.4); background: rgba(0,229,255,0.06); color: #fff; }
+  .choice-btn.correct { border-color: var(--accent3); background: rgba(124,255,107,0.12); color: var(--accent3); animation: pulse-correct 0.4s ease; }
+  .choice-btn.wrong   { border-color: #ff4444; background: rgba(255,68,68,0.1); color: #ff6666; }
+  .choice-btn.reveal  { border-color: var(--accent3); background: rgba(124,255,107,0.06); color: var(--accent3); }
+  @keyframes pulse-correct { 0%{transform:scale(1)} 50%{transform:scale(1.03)} 100%{transform:scale(1)} }
+
+  .feedback { display: none; margin-top: 11px; padding: 10px 13px; border-radius: 8px; font-size: 12px; line-height: 1.8; font-family: var(--mono); border: 1px solid; white-space: pre-line; }
+  .feedback.show { display: block; }
+  .feedback.ok { border-color: #7cff6b40; background: #7cff6b08; color: #9fffb0; }
+  .feedback.ng { border-color: #ff444440; background: #ff444408; color: #ff9999; }
+
+  .next-btn { display: none; width: 100%; padding: 13px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: var(--mono); font-size: 12px; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .next-btn.show { display: block; }
+  .next-btn:hover { border-color: rgba(0,229,255,0.4); color: var(--accent); }
+
+  /* ── score ── */
+  .score-box { display: none; flex-direction: column; align-items: center; gap: 14px; padding: 26px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); text-align: center; }
+  .score-box.show { display: flex; }
+  .score-label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
+  .score-value { font-family: var(--mono); font-size: 48px; color: var(--accent); line-height: 1; }
+  .score-value span { font-size: 20px; color: var(--text-dim); }
+  .score-msg { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .badge-wrap { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .badge-icon { font-size: 50px; animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+  @keyframes badgePop { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+  .badge-name { font-family: var(--mono); font-size: 12px; letter-spacing: 2px; padding: 3px 14px; border-radius: 20px; border: 1px solid var(--accent); color: var(--accent); background: rgba(0,229,255,0.08); }
+  .score-btns { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+  .retry-btn { padding: 12px; border-radius: 8px; border: 1px solid var(--accent); background: rgba(0,229,255,0.08); color: var(--accent); font-family: var(--mono); font-size: 12px; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; }
+  .retry-btn:hover { background: rgba(0,229,255,0.18); box-shadow: var(--glow); }
+  .home-btn { padding: 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim); font-family: var(--mono); font-size: 12px; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; text-decoration: none; text-align: center; display: block; }
+  .home-btn:hover { border-color: rgba(0,229,255,0.3); color: var(--text); }
+
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <nav class="breadcrumb" aria-label="パンくず">
+      <a href="https://ripimon.github.io/ripmon/">リピ問 top</a>
+      <span class="sep">›</span>
+      <span>コンピュータの足し算・引き算を知ろう。補数って何？</span>
+    </nav>
+    <h1 class="unit-title-head">コンピュータの足し算・引き算を知ろう。マイナスを表す補数って何？</h1>
+  </div>
+</header>
+
+<main>
+
+  <!-- ① 解説動画 -->
+  <section>
+    <div class="sec-label"><div class="dot"></div><h2>解説動画</h2></div>
+
+    <div class="ch-tabs" id="chTabs">
+      <button class="ch-tab" data-ch="1">CH1 2,8,16進数の計算を知る。</button>
+      <button class="ch-tab" data-ch="2">CH2.1 負の数（マイナス）はどう計算？符号ビット or 補数を使う。</button>
+      <button class="ch-tab" data-ch="2b">CH2.2 負の数（マイナス）はどう計算？符号ビット or 補数を使う。</button>
+      <button class="ch-tab" data-ch="3">CH3 オーバーフロー・アンダーフロー</button>
+    </div>
+
+    <div id="chPanels">
+      <!-- CH1 -->
+      <div class="ch-panel" id="panel-ch1">
+        <div class="card border-ch1">
+          <div class="video-wrap short" id="vwrap-ch1">
+            <div class="video-thumb" id="vthumb-ch1" style="background-image:url('ch1_screenshot.png');">
+              <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              <p>▶ タップしてYouTubeで開く</p>
+            </div>
+            <iframe id="vframe-ch1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">CH1：10進数・2進数・8進数・16進数の足し算と引き算（繰り上がり・繰り下がり）</div>
+        </div>
+      </div>
+
+      <!-- CH2 その1 -->
+      <div class="ch-panel" id="panel-ch2">
+        <div class="card border-ch2">
+          <div class="video-wrap short" id="vwrap-ch2">
+            <div class="video-thumb" id="vthumb-ch2" style="background-image:url('ch2_screenshot.png');">
+              <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              <p>▶ タップしてYouTubeで開く</p>
+            </div>
+            <iframe id="vframe-ch2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">CH2.1：符号ビット・1の補数・2の補数とは。補数を使った引き算の仕組み。</div>
+        </div>
+      </div>
+
+      <!-- CH2 その2 -->
+      <div class="ch-panel" id="panel-ch2b">
+        <div class="card border-ch2">
+          <div class="video-wrap short" id="vwrap-ch2b">
+            <div class="video-thumb" id="vthumb-ch2b" style="background-image:url('ch2b_screenshot.png');">
+              <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              <p>▶ タップしてYouTubeで開く</p>
+            </div>
+            <iframe id="vframe-ch2b" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">CH2.2：符号ビット・1の補数・2の補数とは。補数を使った引き算の仕組み。</div>
+        </div>
+      </div>
+
+      <!-- CH3 -->
+      <div class="ch-panel" id="panel-ch3">
+        <div class="card border-ch3">
+          <div class="video-wrap short" id="vwrap-ch3">
+            <div class="video-thumb" id="vthumb-ch3" style="background-image:url('ch3_screenshot.png');">
+              <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+              <p>▶ タップしてYouTubeで開く</p>
+            </div>
+            <iframe id="vframe-ch3" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">CH3：オーバーフロー・アンダーフローとは何か。ビット数と表現できる範囲。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 問題セレクタ -->
+  <section>
+    <div class="sec-label"><div class="dot"></div><h2>解説動画を見たら、問題を解いてみよう</h2></div>
+    <div class="quiz-select-grid">
+      <button class="quiz-sel-btn ch1 active" data-quiz="1">
+        <span class="qsb-ch">CH1</span>
+        <span class="qsb-name">虫食い問題で、2,8,16進数の計算をやってみよう。</span>
+        <span class="qsb-count">14問</span>
+      </button>
+      <button class="quiz-sel-btn ch2" data-quiz="2">
+        <span class="qsb-ch">CH2</span>
+        <span class="qsb-name">符号ビットや補数を使って、負の数の計算をやってみよう。</span>
+        <span class="qsb-count">12問</span>
+      </button>
+      <button class="quiz-sel-btn ch3" data-quiz="3">
+        <span class="qsb-ch">CH3</span>
+        <span class="qsb-name">オーバーフロー、アンダーフローを理解しよう</span>
+        <span class="qsb-count">10問</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ③ 問題ナビ -->
+  <section>
+    <div class="q-panel" id="qPanel"></div>
+  </section>
+
+  <!-- ④ クイズエリア -->
+  <section>
+    <div class="quiz-area" id="quizArea"></div>
+    <div class="score-box" id="scoreBox"></div>
+  </section>
+
+</main>
+
+<script>
+/* ===== YOUTUBE IDs（後で差し替え） ===== */
+const YOUTUBE_IDS = {
+  ch1:  '250KdGOWMIg',
+  ch2:  '4W2qFv-H4jU',
+  ch2b: '3jIYl_9tB4o',
+  ch3:  'CZq58GhhPss'
+};
+
+/* ===== QUESTIONS ===== */
+const QUESTIONS = {
+  /* ── CH1: 筆算の虫食い問題 ── */
+  /* calc: { op:'+'/'-', rows:[行データ], result:[行データ], hint:"ヒント" }
+     各行データ: 文字列の配列。"□"は虫食い箇所。
+     op列は rows[1] にのみ付く。 */
+  1: [
+    /* 10進数 足し算 */
+    { id:"ba1-01", ch:1,
+      label:"10進数（足し算）",
+      hint:"10進数：10になったら繰り上がり",
+      calc:{ op:'+', rows:[["2","8","7"],["1","□","6"]], result:["4","4","3"] },
+      answer:"5", choices:["4","5","6","7"],
+      explanation:"287 + 1□6 = 443 となる □ を求めます。\n443 − 287 = 156 なので □ = 5。\n確認: 287 + 156 = 443 ✓" },
+
+    /* 10進数 引き算 */
+    { id:"ba1-02", ch:1,
+      label:"10進数（引き算）",
+      hint:"10進数：引けないときは上の桁から10を借りる",
+      calc:{ op:'-', rows:[["4","3","2"],["1","□","7"]], result:["2","7","5"] },
+      answer:"5", choices:["4","5","6","7"],
+      explanation:"432 − 1□7 = 275 となる □ を求めます。\n432 − 275 = 157 なので □ = 5。\n確認: 432 − 157 = 275 ✓" },
+
+    /* 2進数 足し算① */
+    { id:"ba1-03", ch:1,
+      label:"2進数（足し算）①",
+      hint:"2進数：0と1だけ。2になったら繰り上がり",
+      calc:{ op:'+', rows:[["1","0","1","1"],["0","1","1","□"]], result:["1","0","0","0","0"] },
+      answer:"1", choices:["0","1"],
+      explanation:"1011 + 011□ = 10000 となる □ を求めます。\n10000(2) = 16(10), 1011(2) = 11(10)\n16 − 11 = 5 = 0101(2)\nよって □ = 1 ✓" },
+
+    /* 2進数 足し算② */
+    { id:"ba1-04", ch:1,
+      label:"2進数（足し算）②",
+      hint:"2進数：0と1だけ。2になったら繰り上がり",
+      calc:{ op:'+', rows:[["1","1","0","1"],["□","1","1","0"]], result:["1","0","0","1","1"] },
+      answer:"0", choices:["0","1"],
+      explanation:"1101 + □110 = 10011 となる □ を求めます。\n10011(2) = 19(10), 1101(2) = 13(10)\n19 − 13 = 6 = 0110(2)\nよって □ = 0 ✓" },
+
+    /* 2進数 引き算① */
+    { id:"ba1-05", ch:1,
+      label:"2進数（引き算）①",
+      hint:"2進数：引けないときは上の桁から2を借りる",
+      calc:{ op:'-', rows:[["1","1","0","0"],["0","1","□","1"]], result:["0","1","1","1"] },
+      answer:"0", choices:["0","1"],
+      explanation:"1100 − 01□1 = 0111 となる □ を求めます。\n1100(2) = 12(10), 0111(2) = 7(10)\n12 − 7 = 5 = 0101(2)\nよって □ = 0（引く数は 0101）✓" },
+
+    /* 2進数 引き算② */
+    { id:"ba1-06", ch:1,
+      label:"2進数（引き算）②",
+      hint:"2進数：引けないときは上の桁から2を借りる",
+      calc:{ op:'-', rows:[["1","0","1","1","0"],["0","0","1","1","1"]], result:["□","1","1","1","1"] },
+      answer:"0", choices:["0","1"],
+      explanation:"10110 − 00111 = □1111 となる □ を求めます。\n10110(2) = 22(10), 00111(2) = 7(10)\n22 − 7 = 15 = 01111(2)\nよって □ = 0 ✓" },
+
+    /* 8進数 足し算① */
+    { id:"ba1-07", ch:1,
+      label:"8進数（足し算）①",
+      hint:"8進数：0〜7だけ。8になったら繰り上がり",
+      calc:{ op:'+', rows:[["3","5","6"],["1","4","□"]], result:["5","2","3"] },
+      answer:"5", choices:["4","5","6","7"],
+      explanation:"356(8) + 14□(8) = 523(8) となる □ を求めます。\n523(8) = 339(10), 356(8) = 238(10)\n339 − 238 = 101(10) = 145(8)\nよって □ = 5 ✓" },
+
+    /* 8進数 足し算② */
+    { id:"ba1-08", ch:1,
+      label:"8進数（足し算）②",
+      hint:"8進数：0〜7だけ。8になったら繰り上がり",
+      calc:{ op:'+', rows:[["2","7","4"],["□","5","3"]], result:["5","4","7"] },
+      answer:"2", choices:["1","2","3","4"],
+      explanation:"274(8) + □53(8) = 547(8) となる □ を求めます。\n547(8) = 359(10), 274(8) = 188(10)\n359 − 188 = 171(10) = 253(8)\nよって □ = 2 ✓" },
+
+    /* 8進数 引き算① */
+    { id:"ba1-09", ch:1,
+      label:"8進数（引き算）①",
+      hint:"8進数：引けないときは上の桁から8を借りる",
+      calc:{ op:'-', rows:[["5","2","3"],["1","4","□"]], result:["3","5","6"] },
+      answer:"5", choices:["4","5","6","7"],
+      explanation:"523(8) − 14□(8) = 356(8) となる □ を求めます。\n523(8) = 339(10), 356(8) = 238(10)\n339 − 238 = 101(10) = 145(8)\nよって □ = 5 ✓" },
+
+    /* 8進数 引き算② */
+    { id:"ba1-10", ch:1,
+      label:"8進数（引き算）②",
+      hint:"8進数：引けないときは上の桁から8を借りる",
+      calc:{ op:'-', rows:[["6","3","0"],["□","4","5"]], result:["3","6","3"] },
+      answer:"2", choices:["1","2","3","4"],
+      explanation:"630(8) − □45(8) = 363(8) となる □ を求めます。\n630(8) = 408(10), 363(8) = 243(10)\n408 − 243 = 165(10) = 245(8)\nよって □ = 2 ✓" },
+
+    /* 16進数 足し算① */
+    { id:"ba1-11", ch:1,
+      label:"16進数（足し算）①",
+      hint:"16進数：0〜9,A〜F。16になったら繰り上がり",
+      calc:{ op:'+', rows:[["A","B","C"],["1","9","□"]], result:["C","5","B"] },
+      answer:"F", choices:["D","E","F","A"],
+      explanation:"ABC(16) + 19□(16) = C5B(16) となる □ を求めます。\nC5B(16) = 3163(10), ABC(16) = 2748(10)\n3163 − 2748 = 415(10) = 19F(16)\nよって □ = F ✓" },
+
+    /* 16進数 足し算② */
+    { id:"ba1-12", ch:1,
+      label:"16進数（足し算）②",
+      hint:"16進数：0〜9,A〜F。16になったら繰り上がり",
+      calc:{ op:'+', rows:[["3","□","8"],["2","A","4"]], result:["6","3","C"] },
+      answer:"9", choices:["8","9","A","B"],
+      explanation:"3□8(16) + 2A4(16) = 63C(16) となる □ を求めます。\n63C(16) = 1596(10), 2A4(16) = 676(10)\n1596 − 676 = 920(10) = 398(16)\nよって □ = 9 ✓" },
+
+    /* 16進数 引き算① */
+    { id:"ba1-13", ch:1,
+      label:"16進数（引き算）①",
+      hint:"16進数：引けないときは上の桁から16を借りる",
+      calc:{ op:'-', rows:[["C","5","B"],["1","9","□"]], result:["A","B","C"] },
+      answer:"F", choices:["D","E","F","A"],
+      explanation:"C5B(16) − 19□(16) = ABC(16) となる □ を求めます。\nC5B(16) = 3163(10), ABC(16) = 2748(10)\n3163 − 2748 = 415(10) = 19F(16)\nよって □ = F ✓" },
+
+    /* 16進数 引き算② */
+    { id:"ba1-14", ch:1,
+      label:"16進数（引き算）②",
+      hint:"16進数：引けないときは上の桁から16を借りる",
+      calc:{ op:'-', rows:[["F","A","0"],["□","3","C"]], result:["B","6","4"] },
+      answer:"4", choices:["3","4","5","6"],
+      explanation:"FA0(16) − □3C(16) = B64(16) となる □ を求めます。\nFA0(16) = 4000(10), B64(16) = 2916(10)\n4000 − 2916 = 1084(10) = 43C(16)\nよって □ = 4 ✓" }
+  ],
+
+  /* ── CH2: 補数 ── */
+  2: [
+    { id:"ba2-01", ch:2,
+      q:"「3」の10の補数はいくつか。",
+      answer:"7",
+      choices:["3","6","7","10"],
+      explanation:"N進数のN補数は「足してN（桁上がり）になる数」です。\n3 + 7 = 10 なので、3の10の補数は7です。" },
+    { id:"ba2-02", ch:2,
+      q:"「8」の9の補数はいくつか。",
+      answer:"1",
+      choices:["1","2","8","9"],
+      explanation:"N進数の(N-1)補数は「足してN-1になる数」です。\n8 + 1 = 9 なので、8の9の補数は1です。" },
+    { id:"ba2-03", ch:2,
+      q:"2進数「101」の2の補数はどれか。",
+      answer:"011",
+      choices:["010","011","100","101"],
+      explanation:"2の補数：足して桁上がりが生じる数\n101 + 011 = 1000（桁上がり発生）\nよって2の補数は 011。\n\n別の求め方：全ビット反転(1の補数)して1を足す\n101 → 010（1の補数）→ 010+1 = 011 ✓" },
+    { id:"ba2-04", ch:2,
+      q:"2進数「101」の1の補数はどれか。",
+      answer:"010",
+      choices:["010","011","100","110"],
+      explanation:"1の補数：全ビットを反転（0→1、1→0）した値\n101 → 010\nよって1の補数は 010。\n\n確認: 101 + 010 = 111 ✓（桁上がりの一歩手前）" },
+    { id:"ba2-05", ch:2,
+      q:"コンピュータが引き算に補数を使う主な理由はどれか。",
+      answer:"足し算だけで引き算ができるため",
+      choices:["掛け算を高速化するため","数値の範囲を広げるため","足し算だけで引き算ができるため","負の数を表示するため"],
+      explanation:"引き算の回路をハードウェアで実装するのはコストがかかります。補数を使えば A−B を A+(−Bの補数) の足し算に変換できるため、加算器だけで減算を実現できます。" },
+    { id:"ba2-06", ch:2,
+      q:"8ビット符号なし整数で +5 を2の補数表現にすると？",
+      answer:"11111011",
+      choices:["00000101","10000101","11111010","11111011"],
+      explanation:"−5 を2の補数で表す手順：\n① +5 = 00000101\n② 全ビット反転（1の補数）= 11111010\n③ 1を足す = 11111011\nよって −5 の2の補数表現は 11111011。" },
+    { id:"ba2-07", ch:2,
+      q:"符号ビット（MSB）が「1」のとき、その数は何を表すか（符号ビット方式の場合）。",
+      answer:"負数",
+      choices:["正数","0","負数","最大値"],
+      explanation:"符号ビット方式では最上位ビット（MSB: Most Significant Bit）を符号に使います。\nMSB=0 → 正数、MSB=1 → 負数。" },
+    { id:"ba2-08", ch:2,
+      q:"符号ビット方式の問題点として正しいものはどれか。",
+      answer:"0の表現が+0と−0の2通りある",
+      choices:["負の数を表現できない","計算が遅くなる","0の表現が+0と−0の2通りある","最大値が小さくなる"],
+      explanation:"符号ビット方式では全ビット0（+0）と、MSBのみ1で残り0（−0）の2種類の「0」が存在します。2の補数表現ではこの問題が解消されています。" },
+    { id:"ba2-09", ch:2,
+      q:"8ビットの2の補数表現で「11111111」が表す値はいくつか。",
+      answer:"−1",
+      choices:["−1","−127","255","−255"],
+      explanation:"2の補数で 11111111:\n全ビット反転 → 00000000\n+1 → 00000001 = 1\nよって元の値は −1。\n\n別の確認: 11111111 + 00000001 = 100000000（桁上がりで0になる）✓" },
+    { id:"ba2-10", ch:2,
+      q:"補数を使って「9 − 5」を足し算で計算すると？（8ビット）",
+      answer:"00001001 + 11111011 = (1)00000100 → 4",
+      choices:["00001001 + 11111011 = (1)00000100 → 4","00001001 + 11111010 = 11111011 → −5","00001001 + 00000101 = 00001110 → 14","00001001 + 10000101 = 10001110 → −114"],
+      explanation:"−5の2の補数 = 11111011\n00001001 (9) + 11111011 (−5) = 100000100\n8ビットに収まらない桁（最上位の1）を捨てると 00000100 = 4 ✓\n補数を使うと引き算が足し算で実現できます。" },
+    { id:"ba2-11", ch:2,
+      q:"8ビット2の補数表現で表せる数の範囲はどれか。",
+      answer:"−128〜127",
+      choices:["0〜255","−127〜127","−128〜127","−128〜128"],
+      explanation:"8ビット2の補数表現:\n・最大: 01111111 = 127\n・最小: 10000000 = −128\n→ −128〜127 の256通り。\n（符号なし8ビットは0〜255）" },
+    { id:"ba2-12", ch:2,
+      q:"「A(10進=10)」の16の補数はいくつか。",
+      answer:"6",
+      choices:["4","5","6","10"],
+      explanation:"A(10) + 6 = 16 → 桁上がり\nよって A の16の補数は 6 です。\n確認: 16進数で A + 6 = 10(16進) ✓" }
+  ],
+
+  /* ── CH3: オーバーフロー・アンダーフロー ── */
+  3: [
+    { id:"ba3-01", ch:3,
+      q:"オーバーフローとはどのような現象か。",
+      answer:"演算結果がデータ型の最大値を超えること",
+      choices:["演算結果がデータ型の最大値を超えること","データが失われること","メモリが不足すること","計算が無限ループすること"],
+      explanation:"オーバーフロー（overflow）とは、演算結果がそのデータ型で表現できる最大値を超えてしまう現象です。例えば8ビット符号なし整数で255+1=0になってしまいます。" },
+    { id:"ba3-02", ch:3,
+      q:"8ビット符号なし整数で「255 + 1」を計算するとどうなるか。",
+      answer:"0になる（オーバーフロー）",
+      choices:["256になる","0になる（オーバーフロー）","エラーになる","127になる"],
+      explanation:"8ビット符号なし整数の最大値は255（11111111）です。\n255 + 1 = 256 = 100000000(2)\n8ビットに収まらず最上位ビットが失われ、0になります。これがオーバーフローです。" },
+    { id:"ba3-03", ch:3,
+      q:"アンダーフローとはどのような現象か。",
+      answer:"演算結果がデータ型の最小値を下回ること",
+      choices:["演算結果がデータ型の最大値を超えること","演算結果がデータ型の最小値を下回ること","変数の値が0になること","負の数が正の数になること"],
+      explanation:"アンダーフロー（underflow）とは、演算結果がそのデータ型で表現できる最小値を下回ってしまう現象です。例えば8ビット符号なし整数で0−1=255になってしまいます。" },
+    { id:"ba3-04", ch:3,
+      q:"8ビット符号なし整数で「0 − 1」を計算するとどうなるか。",
+      answer:"255になる（アンダーフロー）",
+      choices:["−1になる","0になる","255になる（アンダーフロー）","エラーになる"],
+      explanation:"8ビット符号なし整数の最小値は0（00000000）です。\n0 − 1 はアンダーフローを起こし、最大値の255（11111111）に折り返してしまいます。" },
+    { id:"ba3-05", ch:3,
+      q:"8ビット符号あり整数（2の補数）で「127 + 1」を計算するとどうなるか。",
+      answer:"−128になる（オーバーフロー）",
+      choices:["128になる","0になる","−128になる（オーバーフロー）","エラーになる"],
+      explanation:"8ビット符号あり整数の最大値は127（01111111）です。\n127 + 1 = 128 = 10000000(2)\nMSBが1になり、2の補数表現では −128 と解釈されます。これがオーバーフローです。" },
+    { id:"ba3-06", ch:3,
+      q:"8ビット符号なし整数で表現できる数の範囲はどれか。",
+      answer:"0〜255",
+      choices:["0〜127","0〜255","−128〜127","−127〜128"],
+      explanation:"8ビット符号なし整数：\n・最小: 00000000 = 0\n・最大: 11111111 = 255\n→ 0〜255 の256通り。" },
+    { id:"ba3-07", ch:3,
+      q:"オーバーフローを防ぐ最も根本的な対策はどれか。",
+      answer:"十分なビット数のデータ型を選ぶ",
+      choices:["計算を遅くする","メモリを増やす","十分なビット数のデータ型を選ぶ","補数を使わない"],
+      explanation:"オーバーフローはデータ型の範囲を超えることで発生するため、扱う値の最大・最小を把握し、十分なビット数のデータ型（例: 16bit→32bit→64bit）を選ぶことが根本的な対策です。" },
+    { id:"ba3-08", ch:3,
+      q:"n ビットで表現できる符号なし整数の最大値はどれか。",
+      answer:"2^n − 1",
+      choices:["2^n","2^n − 1","2^(n-1)","2^(n-1) − 1"],
+      explanation:"nビット符号なし整数は 0〜(2^n − 1) の範囲です。\n例: n=8 → 0〜255 = 0〜(2^8 − 1)\n最大値は 2^n − 1 です。" },
+    { id:"ba3-09", ch:3,
+      q:"オーバーフローとアンダーフローの共通点はどれか。",
+      answer:"データ型で表現できる範囲を超える点",
+      choices:["メモリが壊れる点","ゼロになる点","データ型で表現できる範囲を超える点","2の補数を使う点"],
+      explanation:"オーバーフローは最大値を超える、アンダーフローは最小値を下回る、という違いはありますが、どちらも「そのデータ型で表現できる範囲の外に出てしまう」点では共通しています。" },
+    { id:"ba3-10", ch:3,
+      q:"プログラムでオーバーフローが発生した場合の典型的な影響はどれか。",
+      answer:"意図しない値が格納されバグになる",
+      choices:["プログラムが自動的に止まる","意図しない値が格納されバグになる","計算精度だけが落ちる","画面が暗くなる"],
+      explanation:"多くの言語・環境ではオーバーフローが発生しても例外が発生せず、折り返しや切り捨てで意図しない値が変数に格納されます。これはバグや脆弱性の原因になります。データ型の範囲を意識した設計が重要です。" }
+  ]
+};
+
+const CH_LABEL = { 1:"CH1", 2:"CH2", 3:"CH3" };
+const BADGE = {
+  1: { icon:"⚡", name:"CH1クリアバッジ" },
+  2: { icon:"🔢", name:"CH2クリアバッジ" },
+  3: { icon:"🏆", name:"CH3クリアバッジ" }
+};
+
+/* ── state ── */
+let currentQuiz = 1, questions = [], statuses = [], chosen = [], current = 0;
+const $ = id => document.getElementById(id);
+
+/* ── CH_TO_QUIZ mapping ── */
+const CH_TO_QUIZ = { 1:1, 2:2, '2b':2, 3:3 };
+
+/* ── CHタブ切り替え ── */
+function switchChTab(ch) {
+  document.querySelectorAll('.ch-tab').forEach(t => {
+    t.className = 'ch-tab';
+    if (t.dataset.ch === String(ch)) {
+      // '2b'の場合はactive-ch2スタイルを流用
+      const styleNum = ch === '2b' ? 2 : ch;
+      t.classList.add(`active-ch${styleNum}`);
+    }
+  });
+  document.querySelectorAll('.ch-panel').forEach(p => p.classList.remove('show'));
+  $(`panel-ch${ch}`).classList.add('show');
+
+  const quizNum = CH_TO_QUIZ[ch];
+  document.querySelectorAll('.quiz-sel-btn').forEach(b => b.classList.remove('active'));
+  const targetBtn = document.querySelector(`.quiz-sel-btn[data-quiz="${quizNum}"]`);
+  if (targetBtn) targetBtn.classList.add('active');
+  startQuiz(quizNum);
+}
+
+document.querySelectorAll('.ch-tab').forEach(tab => {
+  tab.addEventListener('click', () => switchChTab(tab.dataset.ch));
+});
+
+/* ── 動画（YouTubeへ遷移） ── */
+['1','2','2b','3'].forEach(ch => {
+  const wrap = $(`vwrap-ch${ch}`);
+  wrap.addEventListener('click', () => {
+    window.open(`https://www.youtube.com/shorts/${YOUTUBE_IDS['ch'+ch]}`, '_blank');
+  });
+});
+
+/* ── 問題セレクタ ── */
+document.querySelectorAll('.quiz-sel-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.quiz-sel-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    startQuiz(parseInt(btn.dataset.quiz));
+  });
+});
+
+function startQuiz(quizNum) {
+  currentQuiz = quizNum;
+  questions   = QUESTIONS[quizNum];
+  statuses    = Array(questions.length).fill(null);
+  chosen      = Array(questions.length).fill(null);
+  current     = 0;
+  $('scoreBox').className = 'score-box';
+  $('scoreBox').innerHTML = '';
+  renderPanel();
+  renderQuestion();
+}
+
+function renderPanel() {
+  const panel = $('qPanel');
+  panel.innerHTML = '';
+  questions.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'q-dot';
+    if (i === current)         dot.classList.add('current');
+    if (statuses[i] === true)  dot.classList.add('correct');
+    if (statuses[i] === false) dot.classList.add('wrong');
+    dot.textContent = i + 1;
+    dot.title = statuses[i] === null ? '未回答' : statuses[i] ? '正解' : '不正解';
+    dot.addEventListener('click', () => jumpTo(i));
+    panel.appendChild(dot);
+  });
+  const legend = document.createElement('div');
+  legend.className = 'q-legend';
+  legend.innerHTML = `
+    <div class="q-legend-item"><div class="q-legend-sw u"></div>未回答</div>
+    <div class="q-legend-item"><div class="q-legend-sw c"></div>正解</div>
+    <div class="q-legend-item"><div class="q-legend-sw w"></div>不正解</div>`;
+  panel.appendChild(legend);
+}
+
+function jumpTo(idx) {
+  $('scoreBox').className = 'score-box';
+  $('scoreBox').innerHTML = '';
+  current = idx;
+  renderPanel();
+  renderQuestion();
+}
+
+function findNextUnanswered() {
+  for (let i = current + 1; i < questions.length; i++) if (statuses[i] === null) return i;
+  for (let i = 0; i < current; i++)                    if (statuses[i] === null) return i;
+  return null;
+}
+
+/* ── 筆算HTML生成 ── */
+function buildCalcHtml(calc) {
+  // 全行の最大桁数（結果行も含む）
+  const maxCols = Math.max(...calc.rows.map(r => r.length), calc.result.length);
+
+  function makeRow(digits, opSymbol, isResult) {
+    // 桁数が最大に満たない場合、左にスペースで埋める
+    const pad = maxCols - digits.length;
+    let html = `<div class="calc-row${isResult ? ' calc-result' : ''}">`;
+    // 符号列
+    html += `<div class="calc-op${opSymbol === '+' ? ' add' : opSymbol === '-' ? ' sub' : ''}">${opSymbol || ''}</div>`;
+    // 空白パディング
+    for (let i = 0; i < pad; i++) html += `<div class="calc-digit"> </div>`;
+    // 各桁
+    digits.forEach(d => {
+      if (d === '□') html += `<div class="calc-blank">□</div>`;
+      else           html += `<div class="calc-digit">${d}</div>`;
+    });
+    html += `</div>`;
+    return html;
+  }
+
+  let html = `<div class="calc-block">`;
+  // 1行目（符号なし）
+  html += makeRow(calc.rows[0], '', false);
+  // 2行目以降（符号あり）
+  for (let i = 1; i < calc.rows.length; i++) {
+    html += makeRow(calc.rows[i], i === 1 ? calc.op : '', false);
+  }
+  // 区切り線
+  html += `<div class="calc-row"><div class="calc-op"></div><div class="calc-line"></div></div>`;
+  // 結果行
+  html += makeRow(calc.result, '', true);
+  html += `</div>`;
+  return html;
+}
+
+function renderQuestion() {
+  const area = $('quizArea');
+  area.innerHTML = '';
+  if (!questions.length) return;
+  const q = questions[current];
+  const isDone = statuses[current] !== null;
+  const chClass = `ch${currentQuiz}`;
+  const card = document.createElement('div');
+  card.className = `quiz-card ${chClass}`;
+
+  // CH1は筆算レンダラー、それ以外は通常テキスト
+  let bodyHtml;
+  if (q.calc) {
+    const labelTxt = q.label || '';
+    const hintTxt  = q.hint  || '';
+    bodyHtml = `
+      <div class="quiz-question" style="margin-bottom:6px">${labelTxt}の筆算です。<span style="color:var(--accent)">□</span> に入る数を答えなさい。</div>
+      <div class="calc-hint">${hintTxt}</div>
+      ${buildCalcHtml(q.calc)}`;
+  } else {
+    const qHtml = q.q.replace(/［　　　］/g, '<span class="blank">　　　</span>');
+    bodyHtml = `<div class="quiz-question">${qHtml}</div>`;
+  }
+
+  card.innerHTML = `
+    <div class="quiz-meta">
+      <span class="quiz-ch-badge ${chClass}">${CH_LABEL[currentQuiz]}</span>
+      <span class="quiz-num">Q${current + 1} / ${questions.length}</span>
+    </div>
+    ${bodyHtml}
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>`;
+  area.appendChild(card);
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'next-btn'; nextBtn.id = 'nextBtn';
+  nextBtn.addEventListener('click', () => {
+    const next = findNextUnanswered();
+    if (next !== null) jumpTo(next); else showScore();
+  });
+  area.appendChild(nextBtn);
+  const choicesEl = $('choices');
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn'; btn.textContent = c;
+    btn.addEventListener('click', () => handleAnswer(btn, c, q));
+    choicesEl.appendChild(btn);
+  });
+  if (isDone) restoreState(q);
+}
+
+function restoreState(q) {
+  const isCorrect = statuses[current], userChoice = chosen[current];
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.answer) b.classList.add(isCorrect ? 'correct' : 'reveal');
+    else if (b.textContent === userChoice && !isCorrect) b.classList.add('wrong');
+  });
+  showFeedback(isCorrect, q);
+  updateNextBtn();
+}
+
+function handleAnswer(btn, userChoice, q) {
+  if (statuses[current] !== null) return;
+  const isCorrect = userChoice === q.answer;
+  statuses[current] = isCorrect; chosen[current] = userChoice;
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.answer) b.classList.add(isCorrect ? 'correct' : 'reveal');
+  });
+  if (!isCorrect) btn.classList.add('wrong');
+  showFeedback(isCorrect, q);
+  renderPanel();
+  updateNextBtn();
+}
+
+function showFeedback(isCorrect, q) {
+  const fb = $('feedback');
+  fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'ng');
+  fb.textContent = isCorrect ? '✓ 正解！\n' + q.explanation : '✗ 不正解。正解: ' + q.answer + '\n' + q.explanation;
+}
+
+function updateNextBtn() {
+  const nb = $('nextBtn');
+  if (!nb) return;
+  nb.textContent = findNextUnanswered() !== null ? '次の未回答へ →' : '結果を見る';
+  nb.classList.add('show');
+}
+
+function showScore() {
+  $('quizArea').innerHTML = '';
+  const correct = statuses.filter(s => s === true).length;
+  const total = questions.length;
+  const pct = correct / total;
+  const badge = BADGE[currentQuiz];
+  const box = $('scoreBox');
+  box.innerHTML = `
+    <div class="score-label">RESULT · ${CH_LABEL[currentQuiz]}</div>
+    <div class="score-value">${correct}<span>/${total}</span></div>
+    ${pct === 1 ? `<div class="badge-wrap"><div class="badge-icon">${badge.icon}</div><div class="badge-name">${badge.name}</div></div>` : ''}
+    <div class="score-msg">${scoreMsg(pct, currentQuiz)}</div>
+    <div class="score-btns">
+      <button class="retry-btn" id="retryBtn">もう一度挑戦する</button>
+      <a class="home-btn" href="https://ripimon.github.io/ripmon/">← リピ問 top へ戻る</a>
+    </div>`;
+  box.className = 'score-box show';
+  $('retryBtn').addEventListener('click', () => startQuiz(currentQuiz));
+}
+
+function scoreMsg(pct, quizNum) {
+  if (pct === 1)  return `🎉 パーフェクト！${quizNum < 3 ? '次のCHAPTERにも挑戦しよう！' : 'すべてのCHAPTERを完全マスターしました！'}`;
+  if (pct >= 0.8) return '✨ 優秀！あと少しで完璧。間違えた問題を確認しよう。';
+  if (pct >= 0.6) return '📖 もう一息。解説を読んで再チャレンジしよう。';
+  return '💡 解説動画をもう一度見てから再チャレンジしよう。';
+}
+
+/* init */
+switchChTab('1');
+</script>
+</body>
+</html>
