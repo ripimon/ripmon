@@ -61,40 +61,32 @@
   .banner-wrap {
     position: relative; z-index: 10;
     width: 100%;
-    aspect-ratio: 16/9;
-    max-height: 240px;
-    overflow: hidden;
+    background: var(--surface);
     border-bottom: 1px solid var(--border);
-  }
-  .banner-wrap img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-  }
-  /* バナー上にサイト名オーバーレイ */
-  .banner-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(10,14,20,0.72) 0%, rgba(10,14,20,0.2) 60%, transparent 100%);
     display: flex; flex-direction: column;
-    justify-content: flex-end;
-    padding: 18px 20px;
+    align-items: center;
+    padding: 24px 20px;
+    gap: 10px;
   }
   .banner-logo {
     font-family: var(--mono);
-    font-size: clamp(20px, 5vw, 30px);
+    font-size: clamp(28px, 7vw, 40px);
     color: #fff;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     line-height: 1.1;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+    text-align: center;
   }
-  .banner-logo em { font-style: normal; color: var(--accent); }
+  .banner-logo .c-r    { color: #00e5ff; }  /* 水色   */
+  .banner-logo .c-i1   { color: #7cff6b; }  /* 黄緑   */
+  .banner-logo .c-p    { color: #ffd166; }  /* 黄色   */
+  .banner-logo .c-i2   { color: #ff8a80; }  /* 薄い赤 */
+  .banner-logo .c-rest { color: #fff; }
   .banner-logo-sub {
     font-family: var(--mono);
     font-size: clamp(9px, 2vw, 11px);
     color: rgba(200,216,232,0.7);
     letter-spacing: 2px;
-    margin-top: 3px;
+    text-align: center;
   }
 
   /* ── tagline ── */
@@ -208,11 +200,10 @@
 
 <!-- バナー -->
 <div class="banner-wrap">
-  <img src="ripimon_banner.jpg" alt="リピ問 / ripimon バナー">
-  <div class="banner-overlay">
-    <div class="banner-logo"><em>リピ問</em> / ripimon</div>
-    <div class="banner-logo-sub">IT入門を繰り返し練習する</div>
+  <div class="banner-logo">
+    <span class="c-r">r</span><span class="c-i1">i</span><span class="c-p">p</span><span class="c-i2">i</span><span class="c-rest">mon</span>
   </div>
+  <div class="banner-logo-sub">IT入門を繰り返し練習する</div>
 </div>
 
 <!-- キャッチコピー -->
